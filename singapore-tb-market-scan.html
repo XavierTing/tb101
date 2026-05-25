@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Singapore Transaction Banking Market Scan — DBS · OCBC · UOB · HSBC · SC · Citi</title>
+<style>
+  :root {
+    --bg: #f7f8fa;
+    --surface: #ffffff;
+    --ink: #0b1f3a;
+    --ink-soft: #4a5a72;
+    --muted: #8a96aa;
+    --line: #e3e8ef;
+    --accent: #1a73e8;
+    --accent-soft: #e7f0fd;
+    --warn: #b3651a;
+    --warn-soft: #fff3e1;
+    --gap: #d8dee8;
+    --dbs: #ee2722;
+    --ocbc: #b41f24;
+    --uob: #003da5;
+    --hsbc: #db0011;
+    --sc: #38d200;
+    --citi: #003b70;
+    --shadow: 0 1px 2px rgba(11,31,58,.04), 0 4px 12px rgba(11,31,58,.04);
+    --radius: 10px;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .container { max-width: 1400px; margin: 0 auto; padding: 24px; }
+
+  header.page { padding: 32px 0 16px; border-bottom: 1px solid var(--line); margin-bottom: 24px; }
+  header.page h1 { font-size: 28px; margin: 0 0 8px; letter-spacing: -0.01em; }
+  header.page .subtitle { color: var(--ink-soft); margin: 0 0 12px; font-size: 15px; }
+  header.page .meta { color: var(--muted); margin: 0; font-size: 13px; }
+  .bank-strip { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
+  .bank-strip .bank-pill { font-size: 12px; padding: 4px 10px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); font-weight: 600; }
+  .bank-strip .bank-pill[data-bank="DBS"] { color: var(--dbs); border-color: var(--dbs); }
+  .bank-strip .bank-pill[data-bank="OCBC"] { color: var(--ocbc); border-color: var(--ocbc); }
+  .bank-strip .bank-pill[data-bank="UOB"] { color: var(--uob); border-color: var(--uob); }
+  .bank-strip .bank-pill[data-bank="HSBC"] { color: var(--hsbc); border-color: var(--hsbc); }
+  .bank-strip .bank-pill[data-bank="SC"] { color: var(--sc); border-color: var(--sc); }
+  .bank-strip .bank-pill[data-bank="Citi"] { color: var(--citi); border-color: var(--citi); }
+
+  .methodology { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px 20px; margin-bottom: 24px; box-shadow: var(--shadow); font-size: 14px; color: var(--ink-soft); }
+  .methodology strong { color: var(--ink); }
+  .methodology ul { margin: 8px 0 0; padding-left: 18px; }
+
+  .filters { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px 18px; margin-bottom: 24px; box-shadow: var(--shadow); position: sticky; top: 8px; z-index: 30; }
+  .filter-row { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; }
+  .filter-group { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .filter-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin-right: 4px; }
+  .chip { display: inline-flex; align-items: center; gap: 4px; font-size: 13px; padding: 5px 12px; border-radius: 999px; background: var(--bg); border: 1px solid var(--line); cursor: pointer; user-select: none; transition: all 0.15s; }
+  .chip:hover { border-color: var(--accent); }
+  .chip.on { background: var(--accent); color: white; border-color: var(--accent); }
+  .chip[data-bank="DBS"].on { background: var(--dbs); border-color: var(--dbs); }
+  .chip[data-bank="OCBC"].on { background: var(--ocbc); border-color: var(--ocbc); }
+  .chip[data-bank="UOB"].on { background: var(--uob); border-color: var(--uob); }
+  .chip[data-bank="HSBC"].on { background: var(--hsbc); border-color: var(--hsbc); }
+  .chip[data-bank="SC"].on { background: var(--sc); border-color: var(--sc); color: white; }
+  .chip[data-bank="Citi"].on { background: var(--citi); border-color: var(--citi); }
+  .search-box { flex: 1; min-width: 200px; padding: 7px 12px; border: 1px solid var(--line); border-radius: 8px; font-size: 14px; font-family: inherit; }
+  .search-box:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+  .actions { margin-left: auto; display: flex; gap: 8px; }
+  .btn-tiny { font-size: 12px; padding: 5px 10px; border: 1px solid var(--line); background: var(--surface); border-radius: 6px; cursor: pointer; color: var(--ink-soft); }
+  .btn-tiny:hover { border-color: var(--accent); color: var(--accent); }
+
+  section.block { margin-bottom: 40px; }
+  h2.section-title { font-size: 20px; margin: 0 0 14px; letter-spacing: -0.005em; display: flex; align-items: baseline; gap: 10px; }
+  h2.section-title .count { font-size: 13px; color: var(--muted); font-weight: 500; }
+
+  .matrix-wrap { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); overflow: auto; box-shadow: var(--shadow); }
+  table.matrix { width: 100%; border-collapse: collapse; font-size: 13px; }
+  table.matrix thead th { position: sticky; top: 0; background: #f0f3f8; padding: 12px 10px; text-align: left; border-bottom: 2px solid var(--line); font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--ink-soft); z-index: 2; }
+  table.matrix thead th.bank-col { text-align: center; min-width: 150px; }
+  table.matrix tbody td { padding: 10px; vertical-align: top; border-bottom: 1px solid var(--line); }
+  table.matrix tbody tr.category-row td { background: #fafbfd; font-weight: 700; font-size: 13px; padding: 8px 10px; color: var(--ink); text-transform: uppercase; letter-spacing: 0.04em; }
+  table.matrix tbody tr.category-row td.cat-name { color: var(--accent); }
+  table.matrix tbody td.product-cell ul { margin: 0; padding-left: 14px; font-size: 12.5px; }
+  table.matrix tbody td.product-cell li { margin-bottom: 3px; line-height: 1.4; }
+  table.matrix tbody td.product-cell.empty { color: var(--muted); font-style: italic; font-size: 12px; background: repeating-linear-gradient(45deg, transparent, transparent 6px, #fafbfd 6px, #fafbfd 12px); text-align: center; }
+  table.matrix tbody td.product-cell.empty::before { content: "Not public"; }
+  .bank-col-header { font-weight: 700; }
+  .bank-col-header[data-bank="DBS"] { color: var(--dbs); }
+  .bank-col-header[data-bank="OCBC"] { color: var(--ocbc); }
+  .bank-col-header[data-bank="UOB"] { color: var(--uob); }
+  .bank-col-header[data-bank="HSBC"] { color: var(--hsbc); }
+  .bank-col-header[data-bank="SC"] { color: var(--sc); }
+  .bank-col-header[data-bank="Citi"] { color: var(--citi); }
+
+  .match-hit { background: #fff7cc; padding: 0 2px; border-radius: 2px; }
+
+  .bank-cards { display: flex; flex-direction: column; gap: 14px; }
+  .bank-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); }
+  .bank-card[data-bank="DBS"] { border-left: 4px solid var(--dbs); }
+  .bank-card[data-bank="OCBC"] { border-left: 4px solid var(--ocbc); }
+  .bank-card[data-bank="UOB"] { border-left: 4px solid var(--uob); }
+  .bank-card[data-bank="HSBC"] { border-left: 4px solid var(--hsbc); }
+  .bank-card[data-bank="SC"] { border-left: 4px solid var(--sc); }
+  .bank-card[data-bank="Citi"] { border-left: 4px solid var(--citi); }
+  .bank-head { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; cursor: pointer; user-select: none; }
+  .bank-head:hover { background: #fafbfd; }
+  .bank-head h3 { margin: 0; font-size: 18px; }
+  .bank-head .bank-meta { font-size: 12px; color: var(--muted); margin-top: 3px; }
+  .bank-head .chevron { font-size: 14px; color: var(--muted); transition: transform 0.2s; }
+  .bank-card.open .bank-head .chevron { transform: rotate(90deg); }
+  .bank-body { padding: 0 20px 20px; display: none; }
+  .bank-card.open .bank-body { display: block; }
+  .native-tax { background: var(--accent-soft); border-radius: 8px; padding: 12px 14px; font-size: 13px; margin-bottom: 18px; color: var(--ink-soft); }
+  .native-tax strong { color: var(--ink); }
+
+  .native-cat { margin-bottom: 22px; }
+  .native-cat h4 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--accent); margin: 0 0 8px; border-bottom: 1px solid var(--line); padding-bottom: 4px; }
+  .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 10px; }
+  .product { background: #fcfdff; border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; font-size: 13px; }
+  .product .product-name { font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+  .product .product-desc { color: var(--ink-soft); margin-bottom: 6px; line-height: 1.4; }
+  .product .product-meta { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+  .meta-tag { font-size: 10.5px; padding: 2px 7px; border-radius: 4px; background: var(--bg); color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.03em; font-weight: 600; }
+  .meta-tag.unified { background: var(--accent-soft); color: var(--accent); }
+  .meta-tag.segment { background: #f0e9fc; color: #5a3aaf; }
+  .meta-tag.coverage { background: #e8f6ee; color: #1d7a3d; }
+  .meta-tag.channel { background: #fff0e1; color: var(--warn); }
+  .meta-tag.pricing { background: #efeff2; color: var(--muted); }
+
+  .sources { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); font-size: 12px; }
+  .sources strong { color: var(--ink); }
+  .sources ul { margin: 4px 0 0; padding-left: 18px; }
+  .sources li { margin-bottom: 2px; color: var(--ink-soft); }
+  .sources a { word-break: break-all; }
+
+  footer.page { margin-top: 60px; padding: 28px 0; border-top: 1px solid var(--line); color: var(--muted); font-size: 12px; }
+  footer.page h3 { color: var(--ink); margin: 0 0 10px; font-size: 14px; }
+  footer.page ul { margin: 0 0 14px; padding-left: 18px; }
+  footer.page li { margin-bottom: 3px; }
+
+  .legend { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 10px; font-size: 12px; color: var(--ink-soft); }
+  .legend .legend-item { display: inline-flex; align-items: center; gap: 5px; }
+  .legend .swatch { width: 12px; height: 12px; border-radius: 3px; background: var(--gap); }
+  .legend .swatch.np { background: repeating-linear-gradient(45deg, transparent, transparent 4px, #d8dee8 4px, #d8dee8 8px); }
+
+  .hidden { display: none !important; }
+
+  @media print {
+    .filters, .actions, .bank-head .chevron { display: none !important; }
+    .bank-card { break-inside: avoid; }
+    .bank-card .bank-body { display: block !important; }
+    table.matrix thead th { position: static; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<header class="page">
+  <h1>Singapore Transaction Banking Market Scan</h1>
+  <p class="subtitle">A learning-reference map of the products and taxonomies of the six major TB players in Singapore.</p>
+  <p class="meta">Generated 2026-05-25 · Public-source snapshot · Single-file dashboard</p>
+  <div class="bank-strip">
+    <span class="bank-pill" data-bank="DBS">DBS</span>
+    <span class="bank-pill" data-bank="OCBC">OCBC</span>
+    <span class="bank-pill" data-bank="UOB">UOB</span>
+    <span class="bank-pill" data-bank="HSBC">HSBC</span>
+    <span class="bank-pill" data-bank="SC">Standard Chartered</span>
+    <span class="bank-pill" data-bank="Citi">Citi</span>
+  </div>
+</header>
+
+<section class="methodology">
+  <strong>How to read this dashboard.</strong> Two views over the same dataset.
+  <ul>
+    <li><strong>Comparison matrix</strong> — rows are a <em>unified taxonomy</em> (10 categories), columns are the six banks. Cells list each bank's native product name(s) under that category. "Not public" cells are publicly undisclosed at this depth, not necessarily absent.</li>
+    <li><strong>Per-bank deep dives</strong> — collapsible cards. Each card preserves the bank's <em>own native taxonomy</em>, then maps each product into the unified categories so you can see how each bank positions and bundles its catalogue.</li>
+    <li><strong>Filters</strong> (sticky bar above) — narrow by bank, by unified category, or by client segment. Search box highlights matches across both views.</li>
+    <li><strong>Caveats</strong> — pricing is almost always "Not public"; bespoke / FI-tier products often aren't marketed publicly; bank websites change frequently. This is a point-in-time snapshot.</li>
+  </ul>
+</section>
+
+<section class="filters">
+  <div class="filter-row">
+    <div class="filter-group">
+      <span class="filter-label">Banks</span>
+      <span class="chip on" data-filter="bank" data-bank="DBS" data-value="DBS">DBS</span>
+      <span class="chip on" data-filter="bank" data-bank="OCBC" data-value="OCBC">OCBC</span>
+      <span class="chip on" data-filter="bank" data-bank="UOB" data-value="UOB">UOB</span>
+      <span class="chip on" data-filter="bank" data-bank="HSBC" data-value="HSBC">HSBC</span>
+      <span class="chip on" data-filter="bank" data-bank="SC" data-value="SC">SC</span>
+      <span class="chip on" data-filter="bank" data-bank="Citi" data-value="Citi">Citi</span>
+    </div>
+  </div>
+  <div class="filter-row" style="margin-top: 10px;">
+    <div class="filter-group">
+      <span class="filter-label">Category</span>
+      <span class="chip on" data-filter="cat" data-value="Accounts">Accounts</span>
+      <span class="chip on" data-filter="cat" data-value="Payments">Payments</span>
+      <span class="chip on" data-filter="cat" data-value="Collections">Collections</span>
+      <span class="chip on" data-filter="cat" data-value="Liquidity">Liquidity</span>
+      <span class="chip on" data-filter="cat" data-value="Trade Finance">Trade Finance</span>
+      <span class="chip on" data-filter="cat" data-value="Supply Chain Finance">SCF</span>
+      <span class="chip on" data-filter="cat" data-value="FX &amp; Risk">FX &amp; Risk</span>
+      <span class="chip on" data-filter="cat" data-value="Securities Services">Securities Services</span>
+      <span class="chip on" data-filter="cat" data-value="Channels">Channels</span>
+      <span class="chip on" data-filter="cat" data-value="Sustainable">Sustainable / ESG</span>
+    </div>
+  </div>
+  <div class="filter-row" style="margin-top: 10px;">
+    <div class="filter-group">
+      <span class="filter-label">Segment</span>
+      <span class="chip on" data-filter="seg" data-value="SME">SME</span>
+      <span class="chip on" data-filter="seg" data-value="Mid-Corp">Mid-Corp</span>
+      <span class="chip on" data-filter="seg" data-value="Large Corp">Large Corp</span>
+      <span class="chip on" data-filter="seg" data-value="FI">FI</span>
+    </div>
+    <input type="search" class="search-box" placeholder="Search product names or descriptions (e.g. PayNow, virtual account, notional pooling)..." id="search">
+    <div class="actions">
+      <button class="btn-tiny" id="expandAll">Expand all</button>
+      <button class="btn-tiny" id="collapseAll">Collapse all</button>
+      <button class="btn-tiny" id="print">Print</button>
+    </div>
+  </div>
+  <div class="legend">
+    <span class="legend-item"><span class="swatch np"></span>Not public — publicly undisclosed at this depth</span>
+    <span class="legend-item"><span class="swatch" style="background: var(--accent-soft);"></span>Tags map products to unified categories, segments, channels, and coverage</span>
+  </div>
+</section>
+
+<!-- Section A: Comparison matrix -->
+<section class="block" id="matrix-section">
+  <h2 class="section-title">A. Comparison matrix <span class="count" id="matrix-count"></span></h2>
+  <div class="matrix-wrap">
+    <table class="matrix">
+      <thead>
+        <tr>
+          <th style="min-width: 200px;">Unified category</th>
+          <th class="bank-col"><span class="bank-col-header" data-bank="DBS">DBS</span></th>
+          <th class="bank-col"><span class="bank-col-header" data-bank="OCBC">OCBC</span></th>
+          <th class="bank-col"><span class="bank-col-header" data-bank="UOB">UOB</span></th>
+          <th class="bank-col"><span class="bank-col-header" data-bank="HSBC">HSBC</span></th>
+          <th class="bank-col"><span class="bank-col-header" data-bank="SC">SC</span></th>
+          <th class="bank-col"><span class="bank-col-header" data-bank="Citi">Citi</span></th>
+        </tr>
+      </thead>
+      <tbody id="matrix-body"></tbody>
+    </table>
+  </div>
+</section>
+
+<!-- Section B: Per-bank deep dives -->
+<section class="block">
+  <h2 class="section-title">B. Per-bank deep dives <span class="count" id="bank-count"></span></h2>
+  <div class="bank-cards" id="bank-cards"></div>
+</section>
+
+<footer class="page">
+  <h3>Primary public sources consulted</h3>
+  <ul>
+    <li>DBS Singapore — <a href="https://www.dbs.com.sg/corporate/default.page">dbs.com.sg/corporate</a>, <a href="https://www.dbs.com.sg/corporate/solutions/advisory/working-capital-advisory">Working Capital Advisory</a>, <a href="https://www.dbs.com.sg/corporate/solutions/ideal/comprehensive-services">DBS IDEAL</a>, <a href="https://www.dbs.com.sg/corporate/industries/financial-institutions">FI Solutions</a></li>
+    <li>OCBC Singapore — <a href="https://www.ocbc.com/business-banking">Business Banking</a>, <a href="https://www.ocbc.com/business-banking/corporates/transaction-banking">Corporate Transaction Banking</a></li>
+    <li>UOB Singapore — <a href="https://www.uob.com.sg/corporate/index.page">Corporate Banking</a></li>
+    <li>HSBC Singapore CIB — <a href="https://www.business.hsbc.com.sg/en-sg">Business Banking</a>, <a href="https://www.business.hsbc.com.sg/en-sg/products-and-solutions/global-payment-solutions">Global Payments Solutions</a>, <a href="https://www.business.hsbc.com.sg/en-sg/solutions/payments-liquidity-liability-and-investments">Liquidity, Liability &amp; Investments</a>, <a href="https://www.business.hsbc.com.sg/en-sg/products-and-solutions/global-trade-solutions">Global Trade Solutions</a></li>
+    <li>Standard Chartered — <a href="https://www.sc.com/en/corporate-investment-banking/transaction-banking/">Transaction Banking</a>, <a href="https://www.sc.com/en/corporate-investment-banking/global-markets/financing-and-securities-services/">Financing &amp; Securities Services</a></li>
+    <li>Citi Services / TTS — <a href="https://www.citigroup.com/global/businesses/services">Services overview</a>, <a href="https://services.citi.com/solutions/trade-working-capital">Trade &amp; Working Capital</a>, <a href="https://services.citi.com/solutions/payments">Payments</a></li>
+  </ul>
+  <p><strong>Caveats.</strong> Pricing, FI-tier services, and bespoke supply-chain-finance programmes are intentionally not publicly disclosed by most banks — these cells are labelled <em>"Not public"</em> rather than guessed. Where a Singapore-specific product page was sparse, regional/global pages were used as the source. Compiled 2026-05-25.</p>
+</footer>
+
+</div>
+
+<script>
+// ===== DATA =====
+// All products across the 6 banks, normalised to a unified taxonomy.
+const UNIFIED_CATS = [
+  ["Accounts", "Accounts & Information Services"],
+  ["Payments", "Payments"],
+  ["Collections", "Collections"],
+  ["Liquidity", "Liquidity Management"],
+  ["Trade Finance", "Trade Finance"],
+  ["Supply Chain Finance", "Supply Chain Finance"],
+  ["FX & Risk", "FX & Risk Management"],
+  ["Securities Services", "Securities Services & Custody"],
+  ["Channels", "Channels & Connectivity"],
+  ["Sustainable", "Sustainable / ESG TB"],
+];
+
+const BANKS = [
+  { code: "DBS",  name: "DBS",                fullName: "DBS Bank",                  tagline: "Home-market champion. Strongest digital + ASEAN custody footprint." },
+  { code: "OCBC", name: "OCBC",               fullName: "Oversea-Chinese Banking Corp", tagline: "SME-heavy, transaction banking integrated across SG/MY/Greater China." },
+  { code: "UOB",  name: "UOB",                fullName: "United Overseas Bank",      tagline: "ASEAN-focused. Strong FSCM and treasury franchise." },
+  { code: "HSBC", name: "HSBC",               fullName: "The Hongkong & Shanghai Banking Corp", tagline: "Global CIB. Global Payments Solutions (formerly GLCM) + Global Trade Solutions." },
+  { code: "SC",   name: "Standard Chartered", fullName: "Standard Chartered Bank",   tagline: "Cross-border / FI specialist across ASEAN, MEA, S. Asia. Securities Services pioneer in SG." },
+  { code: "Citi", name: "Citi",               fullName: "Citibank",                  tagline: "Global TTS leader. 90+ markets, deep multinational + FI franchise." },
+];
+
+const NATIVE_TAXONOMIES = {
+  DBS:  "Corporate Banking → Solutions: <strong>Cash Management</strong> · <strong>Trade Finance</strong> · <strong>Supply Chain Finance</strong> · <strong>Securities &amp; Fiduciary Services</strong> · <strong>Digital Connectivity (DBS IDEAL)</strong>. Working Capital Advisory sits above the product layer.",
+  OCBC: "Business Banking is segmented by client size: <strong>SMEs · Enterprises · Corporates · Financial Institutions</strong>. Within Corporate Transaction Banking the bank groups by <strong>Payments &amp; Payables · Collections &amp; Reconciliation · Liquidity Management · Trade &amp; Supply Chain Finance · Accounts · Digital Channels (Velocity, APIs, H2H)</strong>.",
+  UOB:  "Corporate Banking primary nav: <strong>Accounts &amp; Transact (Accounts, Cash Management, Treasury, Cards) · Invest &amp; Insure · Finance · Trade &amp; FSCM · Digital · Advice · Sustainability</strong>. Channels live under Digital, with UOB Infinity as the flagship.",
+  HSBC: "Singapore CIB groups solutions under <strong>Global Payments Solutions (GPS, rebranded from GLCM)</strong>, <strong>Global Trade Solutions (GTS)</strong>, <strong>Liquidity, Liability &amp; Investments</strong>, and <strong>Markets / FX</strong>. Channels: HSBCnet portal, APIs, host-to-host.",
+  SC:   "Corporate &amp; Investment Banking groups under <strong>Transaction Banking (Cash Management · Trade &amp; Working Capital)</strong>, <strong>Financial Markets (FX, Rates)</strong>, and the dedicated <strong>Financing &amp; Securities Services</strong> unit. Channels: Straight2Bank suite + Open Banking Marketplace.",
+  Citi: "Citi <strong>Services</strong> umbrella with two pillars: <strong>Treasury &amp; Trade Solutions (TTS)</strong> — Payments, Liquidity Management, Trade &amp; Working Capital, Commercial Cards, Channel Services — and <strong>Securities Services</strong> — Investor Services, Issuer Services.",
+};
+
+const SOURCES = {
+  DBS:  ["https://www.dbs.com.sg/corporate/default.page", "https://www.dbs.com.sg/corporate/solutions/advisory/working-capital-advisory", "https://www.dbs.com.sg/corporate/solutions/ideal/comprehensive-services", "https://www.dbs.com.sg/corporate/industries/financial-institutions"],
+  OCBC: ["https://www.ocbc.com/business-banking", "https://www.ocbc.com/business-banking/corporates/transaction-banking", "https://www.ocbc.com/business-banking/digital-business-banking/access-trade-finance"],
+  UOB:  ["https://www.uob.com.sg/corporate/index.page"],
+  HSBC: ["https://www.business.hsbc.com.sg/en-sg", "https://www.business.hsbc.com.sg/en-sg/products-and-solutions/global-payment-solutions", "https://www.business.hsbc.com.sg/en-sg/solutions/payments-liquidity-liability-and-investments", "https://www.business.hsbc.com.sg/en-sg/solutions/letters-of-credit"],
+  SC:   ["https://www.sc.com/en/corporate-investment-banking/transaction-banking/", "https://www.sc.com/en/corporate-investment-banking/global-markets/financing-and-securities-services/"],
+  Citi: ["https://www.citigroup.com/global/businesses/services", "https://services.citi.com/solutions/trade-working-capital", "https://services.citi.com/solutions/payments"],
+};
+
+// Each product: { bank, native, nativeCat, unified, desc, segments[], channels[], coverage, pricing }
+const PRODUCTS = [
+  // ===== DBS =====
+  { bank: "DBS", native: "DBS Multi-Currency Account", nativeCat: "Cash Management — Account Services", unified: "Accounts", desc: "Corporate current and deposit accounts in SGD plus multi-currency operating accounts for working capital and cross-border flows.", segments: ["SME", "Mid-Corp", "Large Corp"], channels: ["Portal", "Mobile", "API"], coverage: "Global", pricing: "Not public" },
+  { bank: "DBS", native: "Domestic Payment / Bill Payment", nativeCat: "Cash Management — Payables", unified: "Payments", desc: "Standard SGD transfers and bill payments via DBS IDEAL.", segments: ["SME", "Mid-Corp", "Large Corp"], channels: ["Portal", "Mobile", "H2H"], coverage: "SG", pricing: "Standard tariff" },
+  { bank: "DBS", native: "PayNow Payment", nativeCat: "Cash Management — Payables", unified: "Payments", desc: "Real-time 24/7 SGD payments via mobile / NRIC / UEN proxy.", segments: ["SME", "Mid-Corp", "Large Corp"], channels: ["Portal", "Mobile", "API"], coverage: "SG", pricing: "Free / low fee" },
+  { bank: "DBS", native: "DBS PriorityPay (overseas)", nativeCat: "Cash Management — Payables", unified: "Payments", desc: "Cross-border payments with SWIFT gpi tracking and end-to-end visibility.", segments: ["Mid-Corp", "Large Corp", "FI"], channels: ["Portal", "H2H", "API"], coverage: "Global", pricing: "Not public" },
+  { bank: "DBS", native: "Cross-border ACH Payment", nativeCat: "Cash Management — Payables", unified: "Payments", desc: "Low-cost cross-border ACH/local clearing payments to selected markets.", segments: ["Mid-Corp", "Large Corp"], channels: ["Portal", "H2H"], coverage: "ASEAN", pricing: "Not public" },
+  { bank: "DBS", native: "Bulk Payment / Payroll", nativeCat: "Cash Management — Payables", unified: "Payments", desc: "Batch payment files for vendor disbursement and payroll.", segments: ["SME", "Mid-Corp", "Large Corp"], channels: ["Portal", "H2H"], coverage: "Global", pricing: "Not public" },
+  { bank: "DBS", native: "Bulk Collection", nativeCat: "Cash Management — Receivables", unified: "Collections", desc: "Batch receivables file processing for high-volume billers.", segments: ["Mid-Corp", "Large Corp"], channels: ["Portal", "H2H"], coverage: "SG", pricing: "Not public" },
+  { bank: "DBS", native: "DBS MAX (QR collections)", nativeCat: "Cash Management — Receivables", unified: "Collections", desc: "QR-code based contact-free collection for retail and e-commerce.", segments: ["SME", "Mid-Corp"], channels: ["Mobile", "API"], coverage: "SG", pricing: "Per-transaction" },
+  { bank: "DBS", native: "Cash Concentration / Sweeping", nativeCat: "Cash Management — Liquidity", unified: "Liquidity", desc: "Physical sweeps that concentrate balances to a header account on configurable schedules.", segments: ["Mid-Corp", "Large Corp", "FI"], channels: ["Portal", "H2H"], coverage: "ASEAN", pricing: "Not public" },
+  { bank: "DBS", native: "Notional Pooling", nativeCat: "Cash Management — Liquidity", unified: "Liquidity", desc: "Offset surplus/deficit balances across legal entities without physical fund movement.", segments: ["Large Corp", "FI"], channels: ["Portal"], coverage: "ASEAN", pricing: "Not public" },
+  { bank: "DBS", native: "Balance Sharing / Interest Optimisation", nativeCat: "Cash Management — Liquidity", unified: "Liquidity", desc: "Group-wide preferential interest allocation on aggregated balances.", segments: ["Mid-Corp", "Large Corp"], channels: ["Portal"], coverage: "ASEAN", pricing: "Not public" },
+  { bank: "DBS", native: "DBS Treasury Prism", nativeCat: "Cash Management — Liquidity", unified: "Channels", desc: "Online treasury and cash management simulation platform — model structures before implementation.", segments: ["Mid-Corp", "Large Corp"], channels: ["Portal"], coverage: "Global", pricing: "Free (advisory)" },
+  { bank: "DBS", native: "Letters of Credit (Import / Export)", nativeCat: "Trade Finance", unified: "Trade Finance", desc: "Import LC issuance, export LC advising, negotiation and discounting.", segments: ["SME", "Mid-Corp", "Large Corp"], channels: ["Portal", "H2H"], coverage: "Global", pricing: "Standard tariff" },
+  { bank: "DBS", native: "Shipping / Airway Bill Guarantees", nativeCat: "Trade Finance", unified: "Trade Finance", desc: "Release of goods before original shipping documents arrive.", segments: ["Mid-Corp", "Large Corp"], channels: ["Portal"], coverage: "Global", pricing: "Not public" },
+  { bank: "DBS", native: "Documentary Collections", nativeCat: "Trade Finance", unified: "Trade Finance", desc: "Bank-handled exchange of shipping documents against payment / acceptance.", segments: ["SME", "Mid-Corp"], channels: ["Portal"], coverage: "Global", pricing: "Standard tariff" },
+  { bank: "DBS", native: "Trust Receipt Financing", nativeCat: "Trade Finance", unified: "Trade Finance", desc: "Short-term import financing under LC / collection on trust receipt terms.", segments: ["SME", "Mid-Corp", "Large Corp"], channels: ["Portal"], coverage: "Global", pricing: "Not public" },
+  { bank: "DBS", native: "Banker's Guarantee", nativeCat: "Trade Finance", unified: "Trade Finance", desc: "Performance / bid / advance-payment guarantees in support of contractual obligations.", segments: ["SME", "Mid-Corp", "Large Corp"], channels: ["Portal"], coverage: "Global", pricing: "Tariff + commitment" },
+  { bank: "DBS", native: "Standby Letter of Credit", nativeCat: "Trade Finance", unified: "Trade Finance", desc: "Cross-border equivalent of a bank guarantee for performance or payment back-up.", segments: ["Mid-Corp", "Large Corp"], channels: ["Portal"], coverage: "Global", pricing: "Not public" },
+  { bank: "DBS", native: "Accounts Receivable Purchase (ARP)", nativeCat: "Supply Chain Finance", unified: "Supply Chain Finance", desc: "Monetise approved receivables for immediate cashflow.", segments: ["Mid-Corp", "Large Corp"], channels: ["Portal", "H2H"], coverage: "Global", pricing: "Not public" },
+  { bank: "DBS", native: "Supplier Finance", nativeCat: "Supply Chain Finance", unified: "Supply Chain Finance", desc: "Anchor-led programme enabling suppliers to receive early payment at anchor's risk.", segments: ["Large Corp"], channels: ["Portal", "H2H"], coverage: "Global", pricing: "Not public" },
+  { bank: "DBS", native: "Buyer Finance", nativeCat: "Supply Chain Finance", unified: "Supply Chain Finance", desc: "Extends buyer payment terms while seller receives cash up-front.", segments: ["Large Corp"], channels: ["Portal"], coverage: "ASEAN", pricing: "Not public" },
+  { bank: "DBS", native: "FX Contracts (via IDEAL)", nativeCat: "FX & Treasury", unified: "FX & Risk", desc: "Spot and forward FX execution on IDEAL with live streaming rates.", segments: ["SME", "Mid-Corp", "Large Corp"], channels: ["Portal", "API"], coverage: "Global", pricing: "Spread-based" },
+  { bank: "DBS", native: "SecureFX", nativeCat: "FX & Treasury", unified: "FX & Risk", desc: "Lock in preferred FX rates up to 1 month in advance — simple hedge tool for corporates.", segments: ["SME", "Mid-Corp"], channels: ["Portal"], coverage: "Global", pricing: "Spread-based" },
+  { bank: "DBS", native: "Sub-Custody (DBS Securities Services)", nativeCat: "Securities &amp; Fiduciary Services", unified: "Securities Services", desc: "Sub-custodian banking across Asia incl. SG, HK, India, Indonesia. Multi-year award winner.", segments: ["FI"], channels: ["SWIFT", "Portal", "H2H"], coverage: "ASEAN", pricing: "Not public" },
+  { bank: "DBS", native: "Settlement Bank Services", nativeCat: "Securities &amp; Fiduciary Services", unified: "Securities Services", desc: "Settlement bank for selected exchanges in Singapore, Hong Kong and China.", segments: ["FI"], channels: ["SWIFT"], coverage: "Asia", pricing: "Not public" },
+  { bank: "DBS", native: "DBS Vickers (Stock Brokerage)", nativeCat: "Securities &amp; Fiduciary Services", unified: "Securities Services", desc: "Regional institutional stockbroking franchise.", segments: ["FI"], channels: ["Portal", "API"], coverage: "Asia", pricing: "Commission" },
+  { bank: "DBS", native: "DBS IDEAL", nativeCat: "Digital Connectivity", unified: "Channels", desc: "Flagship corporate portal: cash, trade, FX and reporting in one place. Mobile companion app.", segments: ["SME", "Mid-Corp", "Large Corp", "FI"], channels: ["Portal", "Mobile"], coverage: "Global", pricing: "Bundled" },
+  { bank: "DBS", native: "DBS APIs", nativeCat: "Digital Connectivity", unified: "Channels", desc: "Public API marketplace and direct ERP plumbing for embedded finance and real-time integration.", segments: ["Mid-Corp", "Large Corp", "FI"], channels: ["API"], coverage: "Global", pricing: "Tiered" },
+  { bank: "DBS", native: "Digital Signature", nativeCat: "Digital Connectivity", unified: "Channels", desc: "Bank-grade e-signing of mandates and trade documents.", segments: ["SME", "Mid-Corp", "Large Corp"], channels: ["Portal", "Mobile"], coverage: "Global", pricing: "Bundled" },
+
+  // ===== OCBC =====
+  { bank: "OCBC", native: "Multi-Currency Business Account", nativeCat: "Accounts", unified: "Accounts", desc: "Manage up to 13 major foreign currencies through a single account.", segments: ["SME", "Mid-Corp", "Large Corp"], channels: ["Portal", "Mobile"], coverage: "Global", pricing: "Tiered fees" },
+  { bank: "OCBC", native: "SGD Current Account", nativeCat: "Accounts", unified: "Accounts", desc: "Core operating account; fees waived above S$10k balance; SDIC insured to S$100k.", segments: ["SME"], channels: ["Portal", "Mobile"], coverage: "SG", pricing: "Standard" },
+  { bank: "OCBC", native: "Time Deposit (SGD &amp; FX)", nativeCat: "Accounts", unified: "Accounts", desc: "Higher-yield deposits in SGD and 10 foreign currencies.", segments: ["SME", "Mid-Corp"], channels: ["Portal"], coverage: "Global", pricing: "Rate sheet" },
+  { bank: "OCBC", native: "FAST", nativeCat: "Payments &amp; Payables", unified: "Payments", desc: "Instant SGD transfers up to S$200,000 per transaction.", segments: ["SME", "Mid-Corp", "Large Corp"], channels: ["Portal", "Mobile", "API"], coverage: "SG", pricing: "Free / low fee" },
+  { bank: "OCBC", native: "PayNow for Business", nativeCat: "Payments &amp; Payables", unified: "Payments", desc: "Pay via beneficiary's mobile, NRIC, FIN, UEN or Virtual Payment Address.", segments: ["SME", "Mid-Corp", "Large Corp"], channels: ["Portal", "Mobile", "API"], coverage: "SG", pricing: "Free / low fee" },
+  { bank: "OCBC", native: "GIRO", nativeCat: "Payments &amp; Payables", unified: "Payments", desc: "Automated SGD payments for recurring transfers; 2-day credit cycle.", segments: ["SME", "Mid-Corp", "Large Corp"], channels: ["Portal", "H2H"], coverage: "SG", pricing: "Per-transaction" },
+  { bank: "OCBC", native: "MAS Electronic Payment System (MEPS)", nativeCat: "Payments &amp; Payables", unified: "Payments", desc: "Same-day high-value SGD transfers with no upper limit.", segments: ["Mid-Corp", "Large Corp", "FI"], channels: ["Portal", "H2H"], coverage: "SG", pricing: "Per-transaction" },
+  { bank: "OCBC", native: "Network Transfer", nativeCat: "Payments &amp; Payables", unified: "Payments", desc: "Flat S$15 fee transfers to OCBC entities across the network, same-day settlement.", segments: ["Mid-Corp", "Large Corp"], channels: ["Portal", "H2H"], coverage: "ASEAN", pricing: "S$15 flat" },
+  { bank: "OCBC", native: "Outward Telegraphic Transfer", nativeCat: "Payments &amp; Payables", unified: "Payments", desc: "Cross-border payments in 60+ currencies with SWIFT gpi tracking.", segments: ["SME", "Mid-Corp", "Large Corp"], channels: ["Portal", "H2H"], coverage: "Global", pricing: "Standard tariff" },
+  { bank: "OCBC", native: "International ACH (IACH)", nativeCat: "Payments &amp; Payables", unified: "Payments", desc: "Flat-fee local-currency transfers to 8 markets via local clearing rails.", segments: ["Mid-Corp", "Large Corp"], channels: ["Portal", "H2H"], coverage: "ASEAN", pricing: "Flat fee" },
+  { bank: "OCBC", native: "OCBC Virtual Purchasing Card", nativeCat: "Payments &amp; Payables", unified: "Payments", desc: "Virtual single-use / limited-use cards with preapproved spend limits and custom data fields.", segments: ["Mid-Corp", "Large Corp"], channels: ["Portal", "API"], coverage: "Global", pricing: "Interchange" },
+  { bank: "OCBC", native: "eGIRO", nativeCat: "Collections &amp; Reconciliation", unified: "Collections", desc: "Digital GIRO mandate setup — reduces 3-4 week paper cycle to minutes.", segments: ["SME", "Mid-Corp", "Large Corp"], channels: ["Portal", "API"], coverage: "SG", pricing: "Per-mandate" },
+  { bank: "OCBC", native: "Virtual Account", nativeCat: "Collections &amp; Reconciliation", unified: "Collections", desc: "Per-payer virtual account numbers for straight-through reconciliation.", segments: ["Mid-Corp", "Large Corp"], channels: ["Portal", "API"], coverage: "Global", pricing: "Not public" },
+  { bank: "OCBC", native: "OCBC OneCollect App", nativeCat: "Collections &amp; Reconciliation", unified: "Collections", desc: "Mobile QR acceptance: PayNow, Alipay+, WeChat Pay, UnionPay, ShopeePay.", segments: ["SME"], channels: ["Mobile", "API"], coverage: "SG", pricing: "MDR + monthly" },
+  { bank: "OCBC", native: "OCBC POS Terminal", nativeCat: "Collections &amp; Reconciliation", unified: "Collections", desc: "Card-present multi-scheme acceptance (Visa, Mastercard, PayNow, Alipay+, WeChat).", segments: ["SME", "Mid-Corp"], channels: ["Terminal"], coverage: "SG", pricing: "MDR" },
+  { bank: "OCBC", native: "Business Deposit Card", nativeCat: "Collections &amp; Reconciliation", unified: "Collections", desc: "24/7 ATM cash deposit nation-wide for retail / F&amp;B collections.", segments: ["SME"], channels: ["ATM"], coverage: "SG", pricing: "Per-transaction" },
+  { bank: "OCBC", native: "OCBC APIs — Credit Notification", nativeCat: "Collections &amp; Reconciliation", unified: "Collections", desc: "Real-time inbound payment alerts to client ERP / e-commerce platform.", segments: ["Mid-Corp", "Large Corp"], channels: ["API"], coverage: "Global", pricing: "Tiered" },
+  { bank: "OCBC", native: "Cash Sweep", nativeCat: "Liquidity Management", unified: "Liquidity", desc: "Centralised group liquidity with configurable fund allocation.", segments: ["Mid-Corp", "Large Corp"], channels: ["Portal"], coverage: "ASEAN", pricing: "Not public" },
+  { bank: "OCBC", native: "Interest Optimisation", nativeCat: "Liquidity Management", unified: "Liquidity", desc: "Preferential rates applied on aggregated group balances without commingling funds.", segments: ["Mid-Corp", "Large Corp"], channels: ["Portal"], coverage: "ASEAN", pricing: "Not public" },
+  { bank: "OCBC", native: "Notional Pooling", nativeCat: "Liquidity Management", unified: "Liquidity", desc: "Offset surplus/deficit positions across entities without physical movement.", segments: ["Large Corp"], channels: ["Portal"], coverage: "ASEAN", pricing: "Not public" },
+  { bank: "OCBC", native: "Trade Finance Suite", nativeCat: "Trade &amp; Supply Chain Finance", unified: "Trade Finance", desc: "Import / export LCs, documentary collections, trust receipts, invoice financing.", segments: ["SME", "Mid-Corp", "Large Corp"], channels: ["Portal", "Velocity"], coverage: "Global", pricing: "Standard tariff" },
+  { bank: "OCBC", native: "Banker's Guarantee / Standby LC", nativeCat: "Trade &amp; Supply Chain Finance", unified: "Trade Finance", desc: "Performance, bid, advance-payment guarantees and back-up payment SBLCs.", segments: ["SME", "Mid-Corp", "Large Corp"], channels: ["Portal"], coverage: "Global", pricing: "Tariff + commitment" },
+  { bank: "OCBC", native: "Receivables &amp; Supplier Finance (suite)", nativeCat: "Trade &amp; Supply Chain Finance", unified: "Supply Chain Finance", desc: "Receivables monetisation and anchor-led supplier finance programmes.", segments: ["Mid-Corp", "Large Corp"], channels: ["Portal"], coverage: "Global", pricing: "Not public" },
+  { bank: "OCBC", native: "FX Contract Booking", nativeCat: "FX Services", unified: "FX & Risk", desc: "Live online FX rate booking across the platform.", segments: ["SME", "Mid-Corp", "Large Corp"], channels: ["Portal", "API"], coverage: "Global", pricing: "Spread-based" },
+  { bank: "OCBC", native: "OCBC Velocity", nativeCat: "Digital Channels", unified: "Channels", desc: "Flagship enterprise digital channel: payments, collections, trade, FX, liquidity, reporting.", segments: ["Mid-Corp", "Large Corp"], channels: ["Portal", "Mobile"], coverage: "Global", pricing: "Bundled" },
+  { bank: "OCBC", native: "OCBC Business App", nativeCat: "Digital Channels", unified: "Channels", desc: "Award-winning mobile business banking app for account management and authorisations.", segments: ["SME", "Mid-Corp"], channels: ["Mobile"], coverage: "SG", pricing: "Bundled" },
+  { bank: "OCBC", native: "Host-to-Host (H2H)", nativeCat: "Digital Channels", unified: "Channels", desc: "Secure automated file transfer for high-volume payments and statements.", segments: ["Mid-Corp", "Large Corp"], channels: ["H2H"], coverage: "Global", pricing: "Set-up + monthly" },
+  { bank: "OCBC", native: "OCBC APIs (developer portal)", nativeCat: "Digital Channels", unified: "Channels", desc: "Real-time payments, balance, status APIs for ERP / e-commerce integration.", segments: ["Mid-Corp", "Large Corp", "FI"], channels: ["API"], coverage: "Global", pricing: "Tiered" },
+
+  // ===== UOB =====
+  { bank: "UOB", native: "Corporate Accounts", nativeCat: "Accounts &amp; Transact — Accounts", unified: "Accounts", desc: "SGD and multi-currency operating accounts for SMEs through to large enterprises.", segments: ["SME", "Mid-Corp", "Large Corp"], channels: ["Infinity", "Mobile"], coverage: "ASEAN", pricing: "Standard" },
+  { bank: "UOB", native: "Payments", nativeCat: "Accounts &amp; Transact — Cash Management", unified: "Payments", desc: "Domestic SGD (FAST, GIRO, MEPS), PayNow, bulk payments and cross-border via SWIFT / ASEAN local clearing.", segments: ["SME", "Mid-Corp", "Large Corp"], channels: ["Infinity", "H2H", "API"], coverage: "ASEAN", pricing: "Standard tariff" },
+  { bank: "UOB", native: "Collections", nativeCat: "Accounts &amp; Transact — Cash Management", unified: "Collections", desc: "GIRO, eGIRO, PayNow Corporate, card and e-commerce receivables.", segments: ["SME", "Mid-Corp", "Large Corp"], channels: ["Infinity", "H2H", "API"], coverage: "ASEAN", pricing: "Per-transaction" },
+  { bank: "UOB", native: "Virtual Account Services", nativeCat: "Accounts &amp; Transact — Cash Management", unified: "Collections", desc: "Virtual account numbering for automated reconciliation of incoming payments.", segments: ["Mid-Corp", "Large Corp"], channels: ["Infinity", "API"], coverage: "ASEAN", pricing: "Not public" },
+  { bank: "UOB", native: "UOB InvoiceNow", nativeCat: "Cash Management — Value Added Services", unified: "Collections", desc: "Singapore's nationwide e-invoicing rail integrated into receivables flow.", segments: ["SME", "Mid-Corp", "Large Corp"], channels: ["Portal", "API"], coverage: "SG", pricing: "Per-transaction" },
+  { bank: "UOB", native: "SGD Clearing Services", nativeCat: "Cash Management", unified: "Payments", desc: "SGD clearing for correspondents and FI clients.", segments: ["FI"], channels: ["SWIFT", "H2H"], coverage: "SG", pricing: "Tariff" },
+  { bank: "UOB", native: "Liquidity Management", nativeCat: "Cash Management — Liquidity", unified: "Liquidity", desc: "Physical sweeping, notional pooling, interest optimisation across UOB ASEAN footprint.", segments: ["Mid-Corp", "Large Corp", "FI"], channels: ["Infinity", "H2H"], coverage: "ASEAN", pricing: "Not public" },
+  { bank: "UOB", native: "Currency Hedging", nativeCat: "Treasury", unified: "FX & Risk", desc: "FX risk management products: spot, forwards, options, NDFs for ASEAN currencies.", segments: ["Mid-Corp", "Large Corp"], channels: ["Treasury Desk", "Infinity"], coverage: "ASEAN", pricing: "Spread + fee" },
+  { bank: "UOB", native: "Interest Rate Hedging", nativeCat: "Treasury", unified: "FX & Risk", desc: "Interest rate swaps, caps, collars for liability management.", segments: ["Large Corp", "FI"], channels: ["Treasury Desk"], coverage: "Global", pricing: "Spread" },
+  { bank: "UOB", native: "Trade Finance (Import / Export)", nativeCat: "Trade &amp; FSCM", unified: "Trade Finance", desc: "Full trade product set: LCs, guarantees, SBLCs, documentary collections, trade loans, bills financing.", segments: ["SME", "Mid-Corp", "Large Corp"], channels: ["Infinity", "H2H"], coverage: "ASEAN", pricing: "Standard tariff" },
+  { bank: "UOB", native: "Financial Supply Chain Management (FSCM)", nativeCat: "Trade &amp; FSCM", unified: "Supply Chain Finance", desc: "End-to-end SCF: receivables purchase, supplier finance, distributor finance, anchor-led programmes.", segments: ["Large Corp"], channels: ["Portal", "H2H"], coverage: "ASEAN", pricing: "Not public" },
+  { bank: "UOB", native: "UOB Infinity", nativeCat: "Digital", unified: "Channels", desc: "Flagship corporate digital banking platform for cash, trade, FX, liquidity. Mobile companion.", segments: ["SME", "Mid-Corp", "Large Corp"], channels: ["Portal", "Mobile"], coverage: "ASEAN", pricing: "Bundled" },
+  { bank: "UOB", native: "UOB APIs", nativeCat: "Digital", unified: "Channels", desc: "Open banking APIs for payments, balances, FX rates and statement retrieval.", segments: ["Mid-Corp", "Large Corp"], channels: ["API"], coverage: "ASEAN", pricing: "Tiered" },
+  { bank: "UOB", native: "Sustainability-Linked Working Capital", nativeCat: "Sustainability", unified: "Sustainable", desc: "Sustainability-linked loans and supply chain financing tied to ESG KPIs.", segments: ["Large Corp"], channels: ["Portal"], coverage: "ASEAN", pricing: "Margin step-down" },
+
+  // ===== HSBC =====
+  { bank: "HSBC", native: "Deposit Accounts (Current + Term)", nativeCat: "Liquidity, Liability &amp; Investments", unified: "Accounts", desc: "Core SGD/FCY operating and term accounts. Singapore Deposit Insurance covers S$100k per depositor.", segments: ["SME", "Mid-Corp", "Large Corp", "FI"], channels: ["HSBCnet", "Mobile"], coverage: "Global", pricing: "Rate sheet" },
+  { bank: "HSBC", native: "PayNow Corporate", nativeCat: "Global Payments Solutions (GPS)", unified: "Payments", desc: "Enhanced funds transfer using account alias for SGD send / receive / reconcile.", segments: ["SME", "Mid-Corp", "Large Corp"], channels: ["HSBCnet", "API"], coverage: "SG", pricing: "Free / low fee" },
+  { bank: "HSBC", native: "HSBC Clearing &amp; Foreign Currency Payments", nativeCat: "Global Payments Solutions (GPS)", unified: "Payments", desc: "Cross-border + multi-currency clearing leveraging HSBC's global network and direct memberships.", segments: ["Mid-Corp", "Large Corp", "FI"], channels: ["HSBCnet", "H2H", "API"], coverage: "Global", pricing: "Tariff" },
+  { bank: "HSBC", native: "HSBC Global Wallet", nativeCat: "Global Payments Solutions (GPS)", unified: "Payments", desc: "Hold and pay in multiple currencies without an overseas account.", segments: ["Mid-Corp", "Large Corp"], channels: ["HSBCnet"], coverage: "Global", pricing: "Spread + fee" },
+  { bank: "HSBC", native: "HSBC Commercial Cards Programme", nativeCat: "Global Payments Solutions (GPS)", unified: "Payments", desc: "Corporate cards for T&amp;E, purchasing, virtual cards for online and supplier payments.", segments: ["Mid-Corp", "Large Corp"], channels: ["Portal", "API"], coverage: "Global", pricing: "Interchange + fees" },
+  { bank: "HSBC", native: "HSBC Omni Collect", nativeCat: "Global Payments Solutions (GPS)", unified: "Collections", desc: "One-stop digital collections platform aggregating card, bank, wallet and QR rails.", segments: ["SME", "Mid-Corp", "Large Corp"], channels: ["Portal", "API"], coverage: "Global", pricing: "Per-transaction" },
+  { bank: "HSBC", native: "HSBC eGIRO", nativeCat: "Global Payments Solutions (GPS)", unified: "Collections", desc: "Electronic GIRO mandate as Billing Organisation bank.", segments: ["Mid-Corp", "Large Corp"], channels: ["Portal", "API"], coverage: "SG", pricing: "Per-mandate" },
+  { bank: "HSBC", native: "PayNow on SGQR", nativeCat: "Global Payments Solutions (GPS)", unified: "Collections", desc: "Unified SGQR label combining PayNow and other payment codes.", segments: ["SME"], channels: ["Mobile"], coverage: "SG", pricing: "MDR" },
+  { bank: "HSBC", native: "Cash Concentration", nativeCat: "Global Liquidity Solutions", unified: "Liquidity", desc: "Suite of sweep structures (target-balance, zero-balance, threshold) across global markets.", segments: ["Mid-Corp", "Large Corp", "FI"], channels: ["HSBCnet"], coverage: "Global", pricing: "Not public" },
+  { bank: "HSBC", native: "On-Demand Cash Concentration", nativeCat: "Global Liquidity Solutions", unified: "Liquidity", desc: "Self-service real-time sweep triggers for unexpected liquidity events — bypasses standard schedule.", segments: ["Large Corp", "FI"], channels: ["HSBCnet"], coverage: "Global", pricing: "Not public" },
+  { bank: "HSBC", native: "Cross-Currency Cash Concentration", nativeCat: "Global Liquidity Solutions", unified: "Liquidity", desc: "Automatic same-day FX-conversion sweeps into chosen header currency. Live in SG, ME, NA.", segments: ["Large Corp", "FI"], channels: ["HSBCnet"], coverage: "SG / ME / NA", pricing: "Not public" },
+  { bank: "HSBC", native: "Notional Pooling", nativeCat: "Global Liquidity Solutions", unified: "Liquidity", desc: "Offset balances across entities without physical movement.", segments: ["Large Corp", "FI"], channels: ["HSBCnet"], coverage: "Global", pricing: "Not public" },
+  { bank: "HSBC", native: "Interest Enhancement", nativeCat: "Global Liquidity Solutions", unified: "Liquidity", desc: "Yield improvement on group balances without commingling.", segments: ["Mid-Corp", "Large Corp"], channels: ["HSBCnet"], coverage: "Global", pricing: "Not public" },
+  { bank: "HSBC", native: "Liquidity Investment Solutions", nativeCat: "Liquidity, Liability &amp; Investments", unified: "Liquidity", desc: "Auto-sweep cash into MMFs on an online platform. Accredited investors only.", segments: ["Large Corp", "FI"], channels: ["Portal"], coverage: "Global", pricing: "MMF fee" },
+  { bank: "HSBC", native: "Letters of Credit (Import / Export)", nativeCat: "Global Trade Solutions (GTS)", unified: "Trade Finance", desc: "Import LCs for buyer protection, export LCs for seller payment security and access to finance.", segments: ["SME", "Mid-Corp", "Large Corp"], channels: ["HSBCnet"], coverage: "Global", pricing: "Standard tariff" },
+  { bank: "HSBC", native: "Guarantees &amp; Standby LCs", nativeCat: "Global Trade Solutions (GTS)", unified: "Trade Finance", desc: "Performance, bid, advance-payment guarantees and SBLCs for cross-border use.", segments: ["Mid-Corp", "Large Corp"], channels: ["HSBCnet"], coverage: "Global", pricing: "Tariff + commitment" },
+  { bank: "HSBC", native: "Documentary Trade", nativeCat: "Global Trade Solutions (GTS)", unified: "Trade Finance", desc: "Documentary collections (D/P, D/A) and trade document services.", segments: ["SME", "Mid-Corp"], channels: ["HSBCnet"], coverage: "Global", pricing: "Standard tariff" },
+  { bank: "HSBC", native: "Trade Loans", nativeCat: "Global Trade Solutions (GTS)", unified: "Trade Finance", desc: "Pre- and post-shipment trade financing in major and selected emerging currencies.", segments: ["Mid-Corp", "Large Corp"], channels: ["HSBCnet"], coverage: "Global", pricing: "Not public" },
+  { bank: "HSBC", native: "Receivable Finance", nativeCat: "Global Trade Solutions (GTS)", unified: "Supply Chain Finance", desc: "Invoice / receivables finance with optional credit insurance wrap.", segments: ["Mid-Corp", "Large Corp"], channels: ["HSBCnet"], coverage: "Global", pricing: "Not public" },
+  { bank: "HSBC", native: "Supply Chain Finance", nativeCat: "Global Trade Solutions (GTS)", unified: "Supply Chain Finance", desc: "Anchor-led supplier finance and payables finance programmes across HSBC's global network.", segments: ["Large Corp"], channels: ["HSBCnet"], coverage: "Global", pricing: "Not public" },
+  { bank: "HSBC", native: "Markets / FX", nativeCat: "Markets", unified: "FX & Risk", desc: "Spot, forwards, options, NDFs, rates and credit hedging via Markets desk; eFX via HSBCnet.", segments: ["Mid-Corp", "Large Corp", "FI"], channels: ["Portal", "Voice", "API"], coverage: "Global", pricing: "Spread" },
+  { bank: "HSBC", native: "HSBCnet", nativeCat: "Channels", unified: "Channels", desc: "Global corporate banking portal — single sign-on for cash, trade, FX, liquidity, reporting.", segments: ["Mid-Corp", "Large Corp", "FI"], channels: ["Portal", "Mobile"], coverage: "Global", pricing: "Bundled" },
+  { bank: "HSBC", native: "HSBC Developer Portal / APIs", nativeCat: "Channels", unified: "Channels", desc: "Public APIs for payments, balance, statements, trade finance status (Export / Import LC).", segments: ["Mid-Corp", "Large Corp"], channels: ["API"], coverage: "Global", pricing: "Tiered" },
+  { bank: "HSBC", native: "Sustainable Trade Finance / Sustainability-Linked SCF", nativeCat: "Sustainability", unified: "Sustainable", desc: "ESG-linked trade and SCF tied to material sustainability KPIs.", segments: ["Large Corp"], channels: ["HSBCnet"], coverage: "Global", pricing: "Margin step-down" },
+
+  // ===== SC =====
+  { bank: "SC", native: "Account Services (multi-currency)", nativeCat: "Cash Management", unified: "Accounts", desc: "Multi-currency operating accounts and consolidated fund management.", segments: ["Mid-Corp", "Large Corp", "FI"], channels: ["Straight2Bank"], coverage: "Global", pricing: "Tariff" },
+  { bank: "SC", native: "Virtual Accounts", nativeCat: "Cash Management", unified: "Accounts", desc: "Virtual account numbering with mobile approval flows.", segments: ["Mid-Corp", "Large Corp"], channels: ["Straight2Bank", "Mobile", "API"], coverage: "Global", pricing: "Not public" },
+  { bank: "SC", native: "Sustainable Account", nativeCat: "Cash Management (ESG)", unified: "Sustainable", desc: "Operating account whose balances are deployed into sustainable assets — early ESG cash product.", segments: ["Mid-Corp", "Large Corp"], channels: ["Straight2Bank"], coverage: "Global", pricing: "Standard rate" },
+  { bank: "SC", native: "ESG-Linked Cash Account", nativeCat: "Cash Management (ESG)", unified: "Sustainable", desc: "Credit balance interest rate linked to client's ESG performance targets.", segments: ["Large Corp"], channels: ["Straight2Bank"], coverage: "Global", pricing: "Performance-linked" },
+  { bank: "SC", native: "Escrow Services", nativeCat: "Cash Management", unified: "Accounts", desc: "Dedicated escrow and account-bank services for M&amp;A, infrastructure and complex deals.", segments: ["Large Corp", "FI"], channels: ["Portal"], coverage: "Global", pricing: "Fee-based" },
+  { bank: "SC", native: "Straight2Bank Pay (S2B Pay)", nativeCat: "Payments &amp; Channels", unified: "Payments", desc: "Global digital payment platform with online and offline payment options.", segments: ["Mid-Corp", "Large Corp"], channels: ["Portal", "API"], coverage: "Global", pricing: "Per-transaction" },
+  { bank: "SC", native: "SC PrismFX", nativeCat: "Payments &amp; Channels", unified: "Payments", desc: "Consistent embedded cross-border FX payment service. Real-time FX for payments rail.", segments: ["Mid-Corp", "Large Corp", "FI"], channels: ["API"], coverage: "Global", pricing: "Spread" },
+  { bank: "SC", native: "Cross-Border Payments (PayNow / RTGS / SWIFT)", nativeCat: "Payments", unified: "Payments", desc: "Domestic + cross-border rails including ASEAN real-time linkages and SWIFT gpi.", segments: ["Mid-Corp", "Large Corp", "FI"], channels: ["Straight2Bank", "H2H", "API"], coverage: "Global", pricing: "Tariff" },
+  { bank: "SC", native: "Collections (suite)", nativeCat: "Cash Management — Receivables", unified: "Collections", desc: "Domestic + cross-border receivables including local clearing and reconciliation tools.", segments: ["Mid-Corp", "Large Corp"], channels: ["Straight2Bank", "H2H"], coverage: "Global", pricing: "Per-transaction" },
+  { bank: "SC", native: "Liquidity Management", nativeCat: "Cash Management — Liquidity", unified: "Liquidity", desc: "Visibility, control and optimisation across SC's footprint markets (ASEAN, MEA, S. Asia, Greater China).", segments: ["Mid-Corp", "Large Corp", "FI"], channels: ["Straight2Bank"], coverage: "Global", pricing: "Not public" },
+  { bank: "SC", native: "Multi-bank Consolidation", nativeCat: "Cash Management — Liquidity", unified: "Liquidity", desc: "Aggregate balances and movements from third-party banks for a single view of liquidity.", segments: ["Large Corp", "FI"], channels: ["Straight2Bank", "SWIFT"], coverage: "Global", pricing: "Not public" },
+  { bank: "SC", native: "FX Services", nativeCat: "Financial Markets", unified: "FX & Risk", desc: "Spot, forwards, NDFs, options across SC's emerging-market specialism.", segments: ["Mid-Corp", "Large Corp", "FI"], channels: ["Portal", "Voice"], coverage: "Global", pricing: "Spread" },
+  { bank: "SC", native: "Documentary Trade", nativeCat: "Trade &amp; Working Capital", unified: "Trade Finance", desc: "Traditional LC, guarantee, SBLC and documentary collection products.", segments: ["Mid-Corp", "Large Corp"], channels: ["Straight2Bank"], coverage: "Global", pricing: "Standard tariff" },
+  { bank: "SC", native: "Structured Financing", nativeCat: "Trade &amp; Working Capital", unified: "Trade Finance", desc: "Bespoke structured trade for commodity and complex cross-border flows.", segments: ["Large Corp"], channels: ["Banker"], coverage: "Global", pricing: "Bespoke" },
+  { bank: "SC", native: "Supply Chain Finance", nativeCat: "Trade &amp; Working Capital", unified: "Supply Chain Finance", desc: "Receivables, payables, inventory and distributor finance programmes across SC's footprint.", segments: ["Large Corp"], channels: ["Portal", "H2H"], coverage: "Global", pricing: "Not public" },
+  { bank: "SC", native: "Sustainable Trade Financing", nativeCat: "Trade &amp; Working Capital (ESG)", unified: "Sustainable", desc: "Sustainability-linked LCs, invoice financing and trade loans.", segments: ["Large Corp"], channels: ["Straight2Bank"], coverage: "Global", pricing: "Margin step-down" },
+  { bank: "SC", native: "Custody &amp; Sub-Custody", nativeCat: "Financing &amp; Securities Services", unified: "Securities Services", desc: "International custody across SC's footprint markets — Euromoney Best Bank for Securities Services 2025.", segments: ["FI"], channels: ["SWIFT", "Portal"], coverage: "Global", pricing: "Tiered" },
+  { bank: "SC", native: "Fund Administration", nativeCat: "Financing &amp; Securities Services", unified: "Securities Services", desc: "Fund accounting, performance and compliance reporting, share-class hedging, FATCA/CRS support.", segments: ["FI"], channels: ["Portal"], coverage: "Global", pricing: "Asset-based" },
+  { bank: "SC", native: "Trustee / Transfer Agency", nativeCat: "Financing &amp; Securities Services", unified: "Securities Services", desc: "Trustee, supervisory and transfer agency services. Sole global custodian for SG's VCC framework.", segments: ["FI"], channels: ["Portal"], coverage: "Global", pricing: "Fee-based" },
+  { bank: "SC", native: "Securities Lending", nativeCat: "Financing &amp; Securities Services", unified: "Securities Services", desc: "Agency and principal securities lending for institutional portfolios.", segments: ["FI"], channels: ["Trader Desk"], coverage: "Global", pricing: "Fee-share" },
+  { bank: "SC", native: "Digital Asset Custody (pilot SG/HK)", nativeCat: "Financing &amp; Securities Services", unified: "Securities Services", desc: "Digital asset custody live in UAE and Luxembourg; expansion planned to SG and HK.", segments: ["FI"], channels: ["Portal"], coverage: "Global (rolling)", pricing: "Not public" },
+  { bank: "SC", native: "Straight2Bank", nativeCat: "Channels", unified: "Channels", desc: "Flagship corporate channel for transactions, approvals and reporting. Mobile companion.", segments: ["Mid-Corp", "Large Corp", "FI"], channels: ["Portal", "Mobile"], coverage: "Global", pricing: "Bundled" },
+  { bank: "SC", native: "Open Banking Marketplace", nativeCat: "Channels", unified: "Channels", desc: "API marketplace to explore and test connectivity with SC's transaction banking rails.", segments: ["Mid-Corp", "Large Corp", "FI"], channels: ["API"], coverage: "Global", pricing: "Tiered" },
+  { bank: "SC", native: "Trade Express", nativeCat: "Channels", unified: "Channels", desc: "Initiative supporting real-time processing, API integration and future digital asset use cases.", segments: ["Large Corp", "FI"], channels: ["API"], coverage: "Global", pricing: "Not public" },
+
+  // ===== Citi =====
+  { bank: "Citi", native: "Banking as a Service (BaaS) — Virtual Accounts &amp; Payer ID", nativeCat: "TTS — Payments", unified: "Accounts", desc: "Embedded virtual accounts and unique payer IDs for client-on-behalf-of structures.", segments: ["Large Corp", "FI"], channels: ["CitiDirect", "API"], coverage: "Global", pricing: "Not public" },
+  { bank: "Citi", native: "WorldLink Payment Services", nativeCat: "TTS — Payments", unified: "Payments", desc: "Cross-border payments to accounts, cards and wallets from a single funding account in any currency.", segments: ["Large Corp", "FI"], channels: ["CitiDirect", "API"], coverage: "Global", pricing: "Spread + fee" },
+  { bank: "Citi", native: "Instant Payments", nativeCat: "TTS — Payments", unified: "Payments", desc: "Real-time payments rails — processes ~10M instant payment transactions daily.", segments: ["Mid-Corp", "Large Corp", "FI"], channels: ["API", "H2H"], coverage: "Global", pricing: "Per-transaction" },
+  { bank: "Citi", native: "Domestic Payments (ACH &amp; Wires)", nativeCat: "TTS — Payments", unified: "Payments", desc: "Direct membership in 90 markets — local ACH and high-value wires.", segments: ["Mid-Corp", "Large Corp", "FI"], channels: ["CitiDirect", "H2H", "API"], coverage: "Global", pricing: "Tariff" },
+  { bank: "Citi", native: "Cross-Border Payments", nativeCat: "TTS — Payments", unified: "Payments", desc: "Multi-currency cross-border with SWIFT gpi and tracker visibility.", segments: ["Mid-Corp", "Large Corp", "FI"], channels: ["CitiDirect", "API"], coverage: "Global", pricing: "Spread + fee" },
+  { bank: "Citi", native: "Citi Token Services / 24/7 USD Clearing", nativeCat: "TTS — Payments (digital assets)", unified: "Payments", desc: "Blockchain-based tokenised deposits enabling 24/7 cross-border USD movement between Citi branches.", segments: ["Large Corp", "FI"], channels: ["API"], coverage: "Global", pricing: "Not public" },
+  { bank: "Citi", native: "Spring by Citi", nativeCat: "TTS — Payments (acceptance)", unified: "Collections", desc: "E-commerce and digital payment acceptance — cards, wallets, account-to-account.", segments: ["Mid-Corp", "Large Corp"], channels: ["API"], coverage: "Global", pricing: "MDR" },
+  { bank: "Citi", native: "Commercial Cards", nativeCat: "TTS — Payments", unified: "Payments", desc: "T&amp;E, purchasing, fleet card programmes with global data consolidation.", segments: ["Mid-Corp", "Large Corp"], channels: ["Portal", "API"], coverage: "Global", pricing: "Interchange + fees" },
+  { bank: "Citi", native: "Virtual Cards", nativeCat: "TTS — Payments", unified: "Payments", desc: "Single-use / limited-use card numbers for online and supplier payments.", segments: ["Mid-Corp", "Large Corp"], channels: ["Portal", "API"], coverage: "Global", pricing: "Interchange" },
+  { bank: "Citi", native: "Liquidity Management Services", nativeCat: "TTS — Liquidity Management", unified: "Liquidity", desc: "Sweeps, target balancing, notional pooling, in-house bank, multi-bank — \"optimise liquidity management globally\".", segments: ["Large Corp", "FI"], channels: ["CitiDirect"], coverage: "Global", pricing: "Not public" },
+  { bank: "Citi", native: "Commercial Letter of Credit", nativeCat: "TTS — Trade &amp; Working Capital", unified: "Trade Finance", desc: "Sight LCs — bank's promise to pay upon shipment evidence, mitigating buyer/seller risk.", segments: ["Mid-Corp", "Large Corp"], channels: ["CitiDirect"], coverage: "Global", pricing: "Standard tariff" },
+  { bank: "Citi", native: "Usance LC", nativeCat: "TTS — Trade &amp; Working Capital", unified: "Trade Finance", desc: "Deferred payment LCs (30/60/90 days post-shipment) for working capital extension.", segments: ["Mid-Corp", "Large Corp"], channels: ["CitiDirect"], coverage: "Global", pricing: "Standard tariff" },
+  { bank: "Citi", native: "Standby LC / Guarantee", nativeCat: "TTS — Trade &amp; Working Capital", unified: "Trade Finance", desc: "Performance and Financial SBLCs and bank guarantees for cross-border use.", segments: ["Mid-Corp", "Large Corp"], channels: ["CitiDirect"], coverage: "Global", pricing: "Tariff + commitment" },
+  { bank: "Citi", native: "Documentary Collections", nativeCat: "TTS — Trade &amp; Working Capital", unified: "Trade Finance", desc: "Bank-handled document-against-payment / acceptance flows for exports.", segments: ["Mid-Corp", "Large Corp"], channels: ["CitiDirect"], coverage: "Global", pricing: "Standard tariff" },
+  { bank: "Citi", native: "Import Loans", nativeCat: "TTS — Trade &amp; Working Capital", unified: "Trade Finance", desc: "Short-term funding for purchase of goods, domestically or internationally.", segments: ["Mid-Corp", "Large Corp"], channels: ["CitiDirect"], coverage: "Global", pricing: "Not public" },
+  { bank: "Citi", native: "Export Loans (Pre &amp; Post-Shipment)", nativeCat: "TTS — Trade &amp; Working Capital", unified: "Trade Finance", desc: "Funding both before (production) and after (awaiting customer payment) shipping.", segments: ["Mid-Corp", "Large Corp"], channels: ["CitiDirect"], coverage: "Global", pricing: "Not public" },
+  { bank: "Citi", native: "Export Agency Finance (EAF)", nativeCat: "TTS — Trade &amp; Working Capital", unified: "Trade Finance", desc: "Long-term ECA-backed financing for large international sales / infrastructure projects.", segments: ["Large Corp"], channels: ["Banker"], coverage: "Global", pricing: "Bespoke" },
+  { bank: "Citi", native: "Structured Loans / Borrowing Base Finance", nativeCat: "TTS — Trade &amp; Working Capital", unified: "Trade Finance", desc: "Customised flexible working capital secured by inventory or receivables — revolving lines.", segments: ["Large Corp"], channels: ["Banker"], coverage: "Global", pricing: "Bespoke" },
+  { bank: "Citi", native: "Global Accounts Receivable Program (GARP)", nativeCat: "TTS — Trade &amp; Working Capital", unified: "Supply Chain Finance", desc: "Convert customer invoices into immediate cash through Citi.", segments: ["Large Corp"], channels: ["Portal", "H2H"], coverage: "Global", pricing: "Not public" },
+  { bank: "Citi", native: "Credit Insured Accounts Receivables (CIAR)", nativeCat: "TTS — Trade &amp; Working Capital", unified: "Supply Chain Finance", desc: "Early payment on receivables with credit insurance wrap against non-payment risk.", segments: ["Large Corp"], channels: ["Portal", "H2H"], coverage: "Global", pricing: "Not public" },
+  { bank: "Citi", native: "Citi Trade Payables Finance", nativeCat: "TTS — Trade &amp; Working Capital", unified: "Supply Chain Finance", desc: "Extend buyer payment terms while suppliers receive prompt payment.", segments: ["Large Corp"], channels: ["Portal", "H2H"], coverage: "Global", pricing: "Not public" },
+  { bank: "Citi", native: "Citi Supplier Finance", nativeCat: "TTS — Trade &amp; Working Capital", unified: "Supply Chain Finance", desc: "Anchor-led programme for accelerated supplier payments.", segments: ["Large Corp"], channels: ["Portal", "H2H"], coverage: "Global", pricing: "Not public" },
+  { bank: "Citi", native: "Citi Dynamic Discounting", nativeCat: "TTS — Trade &amp; Working Capital", unified: "Supply Chain Finance", desc: "Use surplus cash to pay supplier invoices early in exchange for a discount.", segments: ["Large Corp"], channels: ["Portal"], coverage: "Global", pricing: "Discount yield" },
+  { bank: "Citi", native: "Distribution Finance", nativeCat: "TTS — Trade &amp; Working Capital", unified: "Supply Chain Finance", desc: "Manufacturer receives prompt payment while distributors receive extended payment terms.", segments: ["Large Corp"], channels: ["Portal"], coverage: "Global", pricing: "Not public" },
+  { bank: "Citi", native: "Citi Consolidate", nativeCat: "TTS — Trade &amp; Working Capital (digital)", unified: "Supply Chain Finance", desc: "End-to-end purchase-to-payment digitisation and automation.", segments: ["Large Corp"], channels: ["Portal", "API"], coverage: "Global", pricing: "Not public" },
+  { bank: "Citi", native: "FX Services (130+ currencies)", nativeCat: "TTS / Markets", unified: "FX & Risk", desc: "Transparent-pricing FX in 130+ currencies, integrated with TTS payment rails.", segments: ["Mid-Corp", "Large Corp", "FI"], channels: ["API", "Portal", "Voice"], coverage: "Global", pricing: "Spread" },
+  { bank: "Citi", native: "Investor Services (Custody)", nativeCat: "Securities Services — Investor Services", unified: "Securities Services", desc: "Connect investors and intermediaries to markets globally — global / sub-custody, fund services.", segments: ["FI"], channels: ["SWIFT", "Portal", "API"], coverage: "Global", pricing: "Tiered" },
+  { bank: "Citi", native: "Issuer Services", nativeCat: "Securities Services — Issuer Services", unified: "Securities Services", desc: "Capital market issuance and transaction execution for global institutions (DR programmes, paying agency, trustee).", segments: ["FI"], channels: ["Portal"], coverage: "Global", pricing: "Fee-based" },
+  { bank: "Citi", native: "CitiDirect / CitiDirect BE", nativeCat: "TTS — Channel Services", unified: "Channels", desc: "Flagship corporate digital channel — single sign-on for cash, trade, FX, liquidity, reporting.", segments: ["Mid-Corp", "Large Corp", "FI"], channels: ["Portal", "Mobile"], coverage: "Global", pricing: "Bundled" },
+  { bank: "Citi", native: "CitiConnect", nativeCat: "TTS — Channel Services", unified: "Channels", desc: "Host-to-host and API connectivity (CitiConnect API and CitiConnect for Files / SWIFT).", segments: ["Mid-Corp", "Large Corp", "FI"], channels: ["API", "H2H", "SWIFT"], coverage: "Global", pricing: "Tiered" },
+];
+
+// ===== STATE =====
+const state = {
+  banks: new Set(BANKS.map(b => b.code)),
+  cats: new Set(UNIFIED_CATS.map(c => c[0])),
+  segs: new Set(["SME", "Mid-Corp", "Large Corp", "FI"]),
+  search: "",
+};
+
+// ===== RENDER MATRIX =====
+function renderMatrix() {
+  const body = document.getElementById("matrix-body");
+  body.innerHTML = "";
+  const visibleBanks = BANKS.filter(b => state.banks.has(b.code));
+  const visibleCats = UNIFIED_CATS.filter(c => state.cats.has(c[0]));
+  let visibleCount = 0;
+  const term = state.search.trim().toLowerCase();
+
+  // Hide/show columns
+  document.querySelectorAll("table.matrix thead th.bank-col").forEach((th, i) => {
+    const bankCode = BANKS[i].code;
+    th.style.display = state.banks.has(bankCode) ? "" : "none";
+  });
+
+  visibleCats.forEach(([catKey, catLabel]) => {
+    const tr = document.createElement("tr");
+    visibleBanks.forEach(() => {});
+    const products = PRODUCTS.filter(p => p.unified === catKey);
+    const hasAnyVisible = products.some(p => state.banks.has(p.bank) && p.segments.some(s => state.segs.has(s)) && matchesSearch(p, term));
+    if (!hasAnyVisible && term) return; // hide categories with zero hits when searching
+    visibleCount++;
+
+    // Category header row
+    const catRow = document.createElement("tr");
+    catRow.className = "category-row";
+    catRow.innerHTML = `<td class="cat-name">${catLabel}</td>` +
+      BANKS.map(b => state.banks.has(b.code) ? `<td></td>` : `<td style="display:none"></td>`).join("");
+    body.appendChild(catRow);
+
+    // Product row per category
+    const prodRow = document.createElement("tr");
+    prodRow.innerHTML = `<td></td>` + BANKS.map(b => {
+      if (!state.banks.has(b.code)) return `<td style="display:none"></td>`;
+      const bankProducts = products.filter(p => p.bank === b.code && p.segments.some(s => state.segs.has(s)) && matchesSearch(p, term));
+      if (bankProducts.length === 0) {
+        return `<td class="product-cell empty"></td>`;
+      }
+      return `<td class="product-cell"><ul>${bankProducts.map(p => `<li title="${escapeAttr(p.desc)}">${highlight(p.native, term)}</li>`).join("")}</ul></td>`;
+    }).join("");
+    body.appendChild(prodRow);
+  });
+
+  document.getElementById("matrix-count").textContent =
+    `${visibleCount} categor${visibleCount === 1 ? "y" : "ies"} · ${visibleBanks.length} bank${visibleBanks.length === 1 ? "" : "s"}`;
+}
+
+// ===== RENDER PER-BANK CARDS =====
+function renderBankCards() {
+  const wrap = document.getElementById("bank-cards");
+  wrap.innerHTML = "";
+  const term = state.search.trim().toLowerCase();
+  let visibleBankCount = 0;
+  let totalProducts = 0;
+
+  BANKS.forEach(bank => {
+    if (!state.banks.has(bank.code)) return;
+    const products = PRODUCTS.filter(p =>
+      p.bank === bank.code &&
+      state.cats.has(p.unified) &&
+      p.segments.some(s => state.segs.has(s)) &&
+      matchesSearch(p, term)
+    );
+    if (products.length === 0 && term) return;
+    visibleBankCount++;
+    totalProducts += products.length;
+
+    // Group by native category preserving insertion order
+    const grouped = {};
+    products.forEach(p => {
+      if (!grouped[p.nativeCat]) grouped[p.nativeCat] = [];
+      grouped[p.nativeCat].push(p);
+    });
+
+    const card = document.createElement("div");
+    card.className = "bank-card open";
+    card.setAttribute("data-bank", bank.code);
+    card.innerHTML = `
+      <div class="bank-head" onclick="this.parentElement.classList.toggle('open')">
+        <div>
+          <h3>${bank.name} <span style="font-weight:400; color: var(--muted); font-size: 14px;">— ${bank.fullName}</span></h3>
+          <div class="bank-meta">${bank.tagline} · <strong>${products.length}</strong> visible product${products.length === 1 ? "" : "s"}</div>
+        </div>
+        <span class="chevron">▶</span>
+      </div>
+      <div class="bank-body">
+        <div class="native-tax"><strong>Native taxonomy.</strong> ${NATIVE_TAXONOMIES[bank.code]}</div>
+        ${Object.entries(grouped).map(([cat, items]) => `
+          <div class="native-cat">
+            <h4>${cat}</h4>
+            <div class="product-grid">
+              ${items.map(p => productCard(p, term)).join("")}
+            </div>
+          </div>
+        `).join("")}
+        <div class="sources">
+          <strong>Sources for ${bank.name}:</strong>
+          <ul>${(SOURCES[bank.code] || []).map(u => `<li><a href="${u}" target="_blank" rel="noopener">${u}</a></li>`).join("")}</ul>
+        </div>
+      </div>`;
+    wrap.appendChild(card);
+  });
+
+  document.getElementById("bank-count").textContent =
+    `${visibleBankCount} bank${visibleBankCount === 1 ? "" : "s"} · ${totalProducts} product${totalProducts === 1 ? "" : "s"}`;
+}
+
+function productCard(p, term) {
+  const unifiedLabel = UNIFIED_CATS.find(c => c[0] === p.unified)?.[1] || p.unified;
+  return `<div class="product">
+    <div class="product-name">${highlight(p.native, term)}</div>
+    <div class="product-desc">${highlight(p.desc, term)}</div>
+    <div class="product-meta">
+      <span class="meta-tag unified">${unifiedLabel}</span>
+      ${p.segments.map(s => `<span class="meta-tag segment">${s}</span>`).join("")}
+      <span class="meta-tag coverage">${p.coverage}</span>
+      ${p.channels.map(c => `<span class="meta-tag channel">${c}</span>`).join("")}
+      <span class="meta-tag pricing">${p.pricing}</span>
+    </div>
+  </div>`;
+}
+
+// ===== HELPERS =====
+function matchesSearch(p, term) {
+  if (!term) return true;
+  return (p.native + " " + p.desc + " " + p.nativeCat + " " + p.unified).toLowerCase().includes(term);
+}
+function highlight(text, term) {
+  if (!term) return text;
+  try {
+    const re = new RegExp("(" + term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + ")", "ig");
+    return text.replace(re, '<span class="match-hit">$1</span>');
+  } catch (e) { return text; }
+}
+function escapeAttr(s) { return s.replace(/"/g, "&quot;"); }
+
+// ===== EVENTS =====
+document.querySelectorAll(".chip[data-filter]").forEach(chip => {
+  chip.addEventListener("click", () => {
+    const filter = chip.getAttribute("data-filter");
+    const value = chip.getAttribute("data-value");
+    const set = filter === "bank" ? state.banks : filter === "cat" ? state.cats : state.segs;
+    if (set.has(value)) { set.delete(value); chip.classList.remove("on"); }
+    else { set.add(value); chip.classList.add("on"); }
+    render();
+  });
+});
+document.getElementById("search").addEventListener("input", e => {
+  state.search = e.target.value;
+  render();
+});
+document.getElementById("expandAll").addEventListener("click", () => {
+  document.querySelectorAll(".bank-card").forEach(c => c.classList.add("open"));
+});
+document.getElementById("collapseAll").addEventListener("click", () => {
+  document.querySelectorAll(".bank-card").forEach(c => c.classList.remove("open"));
+});
+document.getElementById("print").addEventListener("click", () => window.print());
+
+function render() {
+  renderMatrix();
+  renderBankCards();
+}
+render();
+</script>
+
+</body>
+</html>

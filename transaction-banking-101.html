@@ -1,0 +1,1512 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Transaction Banking 101 — A Beginner's Guide</title>
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,600,700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg-primary: #f5f5f0;
+    --bg-secondary: #eeeee9;
+    --bg-surface: #ffffff;
+    --text-primary: #1a1a1a;
+    --text-secondary: #6b6b63;
+    --text-muted: #9a978c;
+    --line: rgba(26, 26, 26, 0.08);
+    --line-strong: rgba(26, 26, 26, 0.14);
+    --what-bg: rgba(37, 99, 235, 0.09);
+    --what-fg: #1e40af;
+    --problem-bg: rgba(217, 119, 6, 0.11);
+    --problem-fg: #92400e;
+    --earn-bg: rgba(5, 150, 105, 0.11);
+    --earn-fg: #047857;
+    --radius-sm: 0.5rem;
+    --radius-md: 0.75rem;
+    --radius-lg: 1rem;
+    --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.03);
+    --shadow-2: 0 10px 30px rgba(0, 0, 0, 0.07);
+    --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: "Satoshi", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-feature-settings: "ss01", "ss02";
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-size: 16px;
+    line-height: 1.625;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  a { color: inherit; text-decoration: none; }
+  a:hover { color: var(--text-primary); }
+
+  /* ===== Header / Sticky Nav (with hover mega-menu) ===== */
+  .site-header {
+    position: sticky; top: 0; z-index: 60;
+    background: rgba(245, 245, 240, 0.82);
+    backdrop-filter: saturate(180%) blur(14px);
+    -webkit-backdrop-filter: saturate(180%) blur(14px);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav-wrap {
+    max-width: 80rem;
+    margin: 0 auto;
+    padding: 0.875rem 1.5rem;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 1rem;
+  }
+  .brand {
+    font-weight: 700; font-size: 0.98rem;
+    letter-spacing: -0.01em;
+    flex-shrink: 0;
+  }
+  .brand .brand-tag {
+    color: var(--text-secondary); font-weight: 500; margin-left: 0.4rem;
+  }
+  .nav-list {
+    display: none;
+    gap: 0.1rem;
+    list-style: none; padding: 0; margin: 0;
+    align-items: center;
+  }
+  @media (min-width: 1024px) { .nav-list { display: flex; } }
+  .nav-list > li { position: relative; }
+  .nav-list > li > a {
+    display: inline-flex; align-items: center; gap: 0.25rem;
+    padding: 0.45rem 0.7rem;
+    border-radius: 0.5rem;
+    font-size: 0.86rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    transition: background 180ms var(--ease-out), color 180ms var(--ease-out);
+    cursor: pointer;
+  }
+  .nav-list > li > a:hover,
+  .nav-list > li:hover > a,
+  .nav-list > li > a.is-active {
+    background: rgba(26, 26, 26, 0.06); color: var(--text-primary);
+  }
+  .nav-list .has-menu > a::after {
+    content: "";
+    width: 6px; height: 6px;
+    border-right: 1.5px solid currentColor;
+    border-bottom: 1.5px solid currentColor;
+    transform: rotate(45deg) translateY(-1px);
+    margin-left: 0.15rem;
+    opacity: 0.5;
+  }
+  /* dropdown panel */
+  .submenu {
+    position: absolute;
+    left: 0; top: calc(100% + 8px);
+    min-width: 17rem;
+    background: var(--bg-surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-2);
+    padding: 0.55rem;
+    opacity: 0;
+    transform: translateY(-6px);
+    pointer-events: none;
+    transition: opacity 160ms var(--ease-out), transform 160ms var(--ease-out);
+  }
+  .nav-list > li:hover .submenu,
+  .nav-list > li:focus-within .submenu {
+    opacity: 1; transform: translateY(0); pointer-events: auto;
+  }
+  .submenu::before {
+    content: "";
+    position: absolute; left: 0; right: 0; top: -8px; height: 8px;
+  }
+  .submenu a {
+    display: block;
+    padding: 0.55rem 0.7rem;
+    font-size: 0.86rem;
+    color: var(--text-primary);
+    border-radius: 0.4rem;
+    line-height: 1.35;
+  }
+  .submenu a .sub-note {
+    display: block;
+    font-size: 0.74rem;
+    color: var(--text-secondary);
+    font-weight: 400;
+    margin-top: 0.1rem;
+  }
+  .submenu a:hover { background: var(--bg-secondary); }
+
+  .menu-btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 2.25rem; height: 2.25rem;
+    background: transparent; border: 1px solid var(--line); border-radius: 0.5rem;
+    cursor: pointer; color: var(--text-primary);
+  }
+  @media (min-width: 1024px) { .menu-btn { display: none; } }
+  .menu-btn svg { width: 1.125rem; height: 1.125rem; }
+
+  /* mobile menu */
+  .mobile-menu {
+    display: none;
+    border-top: 1px solid var(--line);
+    background: rgba(245, 245, 240, 0.96);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    max-height: calc(100vh - 64px);
+    overflow-y: auto;
+  }
+  .mobile-menu.open { display: block; }
+  .mobile-menu ul {
+    list-style: none; margin: 0; padding: 0.5rem 1rem 1.5rem;
+    max-width: 80rem; margin-inline: auto;
+  }
+  .mobile-menu li a {
+    display: block;
+    padding: 0.7rem 0.5rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    border-radius: 0.5rem;
+    border-bottom: 1px solid var(--line);
+  }
+  .mobile-menu li:last-child a { border-bottom: 0; }
+  .mobile-menu li a:hover { background: rgba(26,26,26,0.04); }
+  .mobile-menu li.sub a {
+    padding-left: 1.75rem;
+    font-weight: 400;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+  }
+
+  /* ===== Layout ===== */
+  main { padding-bottom: 4rem; }
+  .container {
+    max-width: 80rem;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+  section { scroll-margin-top: 5.5rem; }
+
+  /* ===== Hero ===== */
+  .hero {
+    position: relative;
+    padding-top: 6rem;
+    padding-bottom: 4rem;
+    text-align: left;
+    overflow: hidden;
+  }
+  .hero::after {
+    content: "";
+    position: absolute; inset: auto 0 0 0; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--line-strong), transparent);
+  }
+  .hero-inner {
+    max-width: 56rem;
+  }
+  .hero .eyebrow {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+  }
+  .hero .eyebrow::before {
+    content: ""; width: 1.5rem; height: 1px; background: currentColor; opacity: 0.4;
+  }
+  .hero h1 {
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    line-height: 1.02;
+    letter-spacing: -0.025em;
+    margin: 0 0 1.5rem;
+    font-weight: 700;
+  }
+  .hero h1 .accent {
+    background: linear-gradient(180deg, transparent 65%, rgba(217, 119, 6, 0.22) 65%);
+    padding-right: 0.05em;
+  }
+  .hero p .accent {
+    background: linear-gradient(180deg, transparent 60%, rgba(217, 119, 6, 0.28) 60%);
+    color: var(--text-primary);
+    padding: 0 0.15em;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+  }
+  .hero p {
+    font-size: 1.25rem;
+    color: var(--text-secondary);
+    max-width: 44rem;
+    margin: 0;
+    line-height: 1.55;
+  }
+  .hero .meta-row {
+    display: flex; flex-wrap: wrap; gap: 0.75rem;
+    margin-top: 2.5rem;
+  }
+  .meta-chip {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    background: var(--bg-surface);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+  }
+  .meta-chip .dot { width: 6px; height: 6px; border-radius: 999px; background: currentColor; opacity: 0.6; }
+
+  /* ===== Section title block ===== */
+  .section-head {
+    padding: 4rem 0 1.5rem;
+    max-width: 56rem;
+  }
+  .section-head .kicker {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.85rem;
+    font-weight: 600;
+  }
+  .section-head .kicker .num {
+    background: var(--text-primary);
+    color: var(--bg-primary);
+    padding: 0.1rem 0.45rem;
+    border-radius: 0.3rem;
+    letter-spacing: 0.05em;
+  }
+  .section-head h2 {
+    font-size: clamp(2rem, 3.5vw, 2.75rem);
+    font-weight: 700;
+    margin: 0 0 0.65rem;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+  .section-head .tagline {
+    color: var(--text-secondary);
+    font-size: 1.0625rem;
+    max-width: 44rem;
+    margin: 0;
+  }
+
+  /* ===== Framework grid (3 pillars, stacked horizontally) ===== */
+  .framework {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+  .pillar {
+    background: var(--bg-surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    padding: 1.4rem 1.4rem 1.5rem;
+    box-shadow: var(--shadow-1);
+    transition: transform 220ms var(--ease-out), box-shadow 220ms var(--ease-out);
+  }
+  @media (min-width: 768px) {
+    .pillar {
+      display: grid;
+      grid-template-columns: minmax(220px, 1fr) 2fr;
+      column-gap: 2.5rem;
+      align-items: start;
+      padding: 1.6rem 1.75rem;
+    }
+    .pillar > .pillar-body {
+      border-left: 1px solid var(--line);
+      padding-left: 1.75rem;
+    }
+  }
+  .pillar-body > *:first-child { margin-top: 0; }
+  .pillar:hover { transform: translateY(-2px); box-shadow: var(--shadow-2); }
+  .pillar .label {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    padding: 0.3rem 0.65rem;
+    border-radius: 999px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    margin-bottom: 0.85rem;
+  }
+  .pillar.what .label { background: var(--what-bg); color: var(--what-fg); }
+  .pillar.problem .label { background: var(--problem-bg); color: var(--problem-fg); }
+  .pillar.earn .label { background: var(--earn-bg); color: var(--earn-fg); }
+  .pillar h3 {
+    font-size: 1.0625rem;
+    margin: 0 0 0.35rem;
+    font-weight: 600;
+    letter-spacing: -0.005em;
+    line-height: 1.35;
+  }
+  .pillar p {
+    margin: 0.6rem 0 0;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+  .pillar p + p { margin-top: 0.75rem; }
+  .pillar ul {
+    margin: 0.6rem 0 0; padding-left: 1.1rem;
+    color: var(--text-secondary);
+    font-size: 0.92rem;
+  }
+  .pillar ul li { margin-bottom: 0.5rem; }
+  .pillar ul li strong { color: var(--text-primary); font-weight: 600; }
+
+  /* ===== Summary table ===== */
+  .summary {
+    margin-top: 1.5rem;
+    background: var(--bg-surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    box-shadow: var(--shadow-1);
+  }
+  .summary table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.94rem;
+  }
+  .summary th, .summary td {
+    text-align: left;
+    padding: 0.95rem 1.1rem;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+  .summary thead th {
+    background: var(--bg-secondary);
+    font-weight: 600;
+    font-size: 0.74rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-secondary);
+  }
+  .summary tbody tr:last-child td { border-bottom: none; }
+  .summary tbody tr { transition: background 160ms var(--ease-out); }
+  .summary tbody tr:hover { background: rgba(26,26,26,0.025); }
+  .summary td.cat { font-weight: 600; white-space: nowrap; }
+  .summary td.cat a { border-bottom: 1px solid var(--line-strong); }
+  .summary td.cat a:hover { border-bottom-color: var(--text-primary); }
+  @media (max-width: 640px) {
+    .summary table, .summary thead, .summary tbody, .summary tr, .summary th, .summary td { display: block; }
+    .summary thead { display: none; }
+    .summary tr { padding: 1rem; border-bottom: 1px solid var(--line); }
+    .summary tr:last-child { border-bottom: none; }
+    .summary td { padding: 0.25rem 0; border: none; }
+    .summary td.cat { font-size: 1.05rem; margin-bottom: 0.4rem; }
+  }
+
+  /* ===== Product grid (horizontal cards) ===== */
+  .products {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+  .card {
+    position: relative;
+    background: var(--bg-surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    padding: 1.35rem;
+    box-shadow: var(--shadow-1);
+    display: flex; flex-direction: column;
+    transition: transform 220ms var(--ease-out), box-shadow 220ms var(--ease-out), border-color 220ms var(--ease-out);
+  }
+  .card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-2);
+    border-color: var(--line-strong);
+  }
+  .card-head {
+    display: flex; align-items: flex-start; gap: 0.85rem;
+    margin-bottom: 0.75rem;
+  }
+  .icon {
+    flex-shrink: 0;
+    width: 2.5rem; height: 2.5rem;
+    border-radius: 0.6rem;
+    background: var(--bg-secondary);
+    display: inline-flex; align-items: center; justify-content: center;
+    color: var(--text-primary);
+  }
+  .icon svg { width: 1.2rem; height: 1.2rem; }
+  .card h3 {
+    margin: 0.2rem 0 0; font-size: 1.0625rem; font-weight: 600;
+    line-height: 1.3; letter-spacing: -0.01em;
+  }
+  .scenario {
+    font-style: italic;
+    font-size: 0.93rem;
+    color: var(--text-secondary);
+    border-left: 2px solid var(--problem-fg);
+    padding: 0.15rem 0 0.15rem 0.85rem;
+    margin: 0 0 1rem;
+    line-height: 1.55;
+  }
+  .row {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.5rem 0.8rem;
+    align-items: start;
+    margin-top: 0.7rem;
+    font-size: 0.92rem;
+    line-height: 1.55;
+  }
+
+  /* Horizontal layout on wider screens:
+     [ head + scenario | WHAT | SOLVES | EARNS ] */
+  @media (min-width: 900px) {
+    .card {
+      display: grid;
+      grid-template-columns: minmax(240px, 1.15fr) 1fr 1fr 1fr;
+      column-gap: 1.5rem;
+      align-items: stretch;
+      padding: 1.5rem 1.75rem;
+    }
+    .card-head { grid-column: 1; grid-row: 1; margin-bottom: 0.6rem; }
+    .card .scenario { grid-column: 1; grid-row: 2; margin: 0; }
+    .card > div.row:nth-of-type(2) { grid-column: 2; grid-row: 1 / span 2; }
+    .card > div.row:nth-of-type(3) { grid-column: 3; grid-row: 1 / span 2; }
+    .card > div.row:nth-of-type(4) { grid-column: 4; grid-row: 1 / span 2; }
+    .card .row {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto 1fr;
+      gap: 0.5rem;
+      margin-top: 0;
+      padding-left: 1.25rem;
+      border-left: 1px solid var(--line);
+    }
+  }
+  .tag {
+    display: inline-flex; align-items: center;
+    font-size: 0.62rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    padding: 0.22rem 0.45rem;
+    border-radius: 0.35rem;
+    height: 1.2rem;
+    margin-top: 0.18rem;
+    white-space: nowrap;
+  }
+  .tag.what { background: var(--what-bg); color: var(--what-fg); }
+  .tag.problem { background: var(--problem-bg); color: var(--problem-fg); }
+  .tag.earn { background: var(--earn-bg); color: var(--earn-fg); }
+  .row .text { color: var(--text-primary); }
+  .row .text.muted { color: var(--text-secondary); }
+
+  /* ===== Conceptual list ===== */
+  .concept-list {
+    margin-top: 1.5rem;
+    background: var(--bg-surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    padding: 1.4rem 1.6rem;
+    box-shadow: var(--shadow-1);
+  }
+  .concept-list h4 {
+    margin: 0 0 0.75rem;
+    font-size: 0.74rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    color: var(--text-secondary);
+  }
+  .concept-list ul {
+    margin: 0; padding: 0;
+    list-style: none;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.85rem;
+  }
+  @media (min-width: 720px) { .concept-list ul { grid-template-columns: repeat(2, 1fr); } }
+  .concept-list ul li {
+    padding-left: 1rem;
+    border-left: 2px solid var(--line);
+    font-size: 0.93rem;
+    color: var(--text-secondary);
+    line-height: 1.55;
+  }
+  .concept-list ul li strong {
+    display: block;
+    color: var(--text-primary);
+    font-weight: 600;
+    margin-bottom: 0.15rem;
+    font-size: 0.95rem;
+  }
+
+  /* ===== CTA call-out (link to companion site) ===== */
+  .cta-callout {
+    margin-top: 2rem;
+    padding: 1.5rem 1.75rem;
+    background: var(--bg-surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-1);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.25rem 2rem;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .cta-callout .cta-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    max-width: 38rem;
+  }
+  .cta-callout .cta-text strong {
+    color: var(--text-primary);
+    font-size: 1.0625rem;
+    font-weight: 600;
+    letter-spacing: -0.005em;
+  }
+  .cta-callout .cta-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.7rem 1.15rem;
+    background: var(--text-primary);
+    color: var(--bg-primary);
+    border-radius: 999px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    white-space: nowrap;
+    transition: transform 180ms var(--ease-out), background 180ms var(--ease-out);
+  }
+  .cta-callout .cta-button:hover {
+    background: #333;
+    color: var(--bg-primary);
+    transform: translateY(-1px);
+  }
+  .cta-callout .cta-button .arrow {
+    transition: transform 180ms var(--ease-out);
+  }
+  .cta-callout .cta-button:hover .arrow {
+    transform: translateX(2px);
+  }
+
+  /* ===== Footer ===== */
+  footer {
+    margin-top: 4rem;
+    padding: 3rem 1.5rem;
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    border-top: 1px solid var(--line);
+  }
+  footer .foot-brand {
+    font-weight: 600; color: var(--text-primary);
+    display: block; margin-bottom: 0.35rem;
+  }
+
+  /* ===== Reveal-on-scroll animation ===== */
+  .reveal {
+    opacity: 0;
+    transform: translateY(16px);
+    filter: blur(4px);
+    transition: opacity 800ms var(--ease-out), transform 800ms var(--ease-out), filter 800ms var(--ease-out);
+  }
+  .reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { opacity: 1; transform: none; filter: none; transition: none; }
+    html { scroll-behavior: auto; }
+  }
+
+  /* ===== Utility ===== */
+  .sr-only {
+    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="nav-wrap">
+    <div class="brand">Transaction Banking 101</div>
+    <nav aria-label="Primary">
+      <ul class="nav-list">
+        <li><a href="#what-is-tb" data-nav="what-is-tb">Overview</a></li>
+        <li class="has-menu">
+          <a href="#cash-mgmt" data-nav="cash-mgmt">Cash Management</a>
+          <div class="submenu">
+            <a href="#accounts">Accounts<span class="sub-note">Where the company's money lives</span></a>
+            <a href="#payments">Payments<span class="sub-note">Every way to send money out</span></a>
+            <a href="#collections">Collections<span class="sub-note">Every way to bring money in</span></a>
+            <a href="#liquidity">Liquidity Management<span class="sub-note">Squeeze more out of cash across accounts</span></a>
+          </div>
+        </li>
+        <li class="has-menu">
+          <a href="#trade-wc" data-nav="trade-wc">Trade &amp; Working Capital</a>
+          <div class="submenu">
+            <a href="#trade">Trade Finance<span class="sub-note">Standing in the middle of cross-border trade</span></a>
+            <a href="#scf">Supply Chain Finance<span class="sub-note">Bank pays the supplier early</span></a>
+          </div>
+        </li>
+        <li><a href="#fx" data-nav="fx">FX</a></li>
+        <li><a href="#channels" data-nav="channels">Channels</a></li>
+      </ul>
+    </nav>
+    <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <ul>
+      <li><a href="#what-is-tb">What is Transaction Banking?</a></li>
+      <li><a href="#cash-mgmt">01. Cash Management</a></li>
+      <li class="sub"><a href="#accounts">Accounts</a></li>
+      <li class="sub"><a href="#payments">Payments</a></li>
+      <li class="sub"><a href="#collections">Collections</a></li>
+      <li class="sub"><a href="#liquidity">Liquidity Management</a></li>
+      <li><a href="#trade-wc">02. Trade &amp; Working Capital</a></li>
+      <li class="sub"><a href="#trade">Trade Finance</a></li>
+      <li class="sub"><a href="#scf">Supply Chain Finance</a></li>
+      <li><a href="#fx">03. Foreign Exchange (FX)</a></li>
+      <li><a href="#channels">04. Channels &amp; Connectivity</a></li>
+    </ul>
+  </div>
+</header>
+
+<main>
+
+  <!-- ============ HERO ============ -->
+  <section class="hero container" aria-labelledby="hero-title">
+    <div class="hero-inner reveal">
+      <h1 id="hero-title">Transaction Banking 101</h1>
+      <p>Transaction banking is <span class="accent">the everyday banking</span> a company uses to hold cash, pay suppliers, collect from customers, finance trade, and manage currencies.</p>
+    </div>
+  </section>
+
+  <!-- ============ WHAT IS TB ============ -->
+  <section id="what-is-tb" class="container">
+    <div class="section-head reveal">
+      <h2>What is Transaction Banking?</h2>
+      <p class="tagline">Transaction banking is the financial bloodstream of every business &mdash; moving cash in, out, and around, every day. And it's where banks earn some of their biggest, steadiest profits.</p>
+    </div>
+    <div class="framework">
+      <article class="pillar what reveal">
+        <div class="pillar-head">
+          <span class="label">What it is</span>
+        <h3>The bank's everyday toolkit for businesses</h3>
+        </div>
+        <div class="pillar-body">
+          <p>Think of a bank as a hardware store. Loans and credit cards are the big-ticket items. Transaction banking is all the everyday tools on the shelves.</p>
+        <p>It covers where the company keeps its cash, how it pays suppliers and staff, how it collects from customers, how it ships goods across borders, and how it juggles different currencies.</p>
+        </div>
+      </article>
+      <article class="pillar problem reveal">
+        <div class="pillar-head">
+          <span class="label">Problem it solves</span>
+        <h3>Running a business is a logistics problem</h3>
+        </div>
+        <div class="pillar-body">
+          <p>By Friday, a mid-sized company has to pay 200 suppliers, collect from 5,000 customers, hold cash in 8 currencies, fund a shipment from Vietnam, and survive a swing in the SGD/USD rate.</p>
+        <p>No company wants to build that circulation system itself. The bank builds it once, then rents it to everyone &mdash; payment rails, accounts, financing, hedging tools.</p>
+        </div>
+      </article>
+      <article class="pillar earn reveal">
+        <div class="pillar-head">
+          <span class="label">How the bank earns</span>
+        <h3>Four quiet but huge revenue streams</h3>
+        </div>
+        <div class="pillar-body">
+          <ul>
+          <li><strong>The deposit gap.</strong> Money sits in business current accounts earning the customer almost nothing &mdash; the bank lends that same money out at much higher rates. That gap (called <em>Net Interest Margin</em>, or NIM) is the single biggest moneymaker in transaction banking.</li>
+          <li><strong>Transaction fees.</strong> A few cents per payment, a few dollars per wire, a small percentage per card swipe. Tiny each, huge in aggregate.</li>
+          <li><strong>FX spread.</strong> Every time the business converts currencies, the bank quotes a slightly worse rate than its own wholesale cost. The small gap between the two rates is the bank's cut.</li>
+          <li><strong>Trade financing interest.</strong> Short-term loans backed by real shipments and invoices &mdash; low risk, decent margin.</li>
+        </ul>
+        <p>Banks love this business: low capital intensity, customers rarely switch, it keeps earning in a recession, and the deposits fund the rest of the bank.</p>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ============ UMBRELLA: CASH MANAGEMENT ============ -->
+  <section id="cash-mgmt" class="container">
+    <div class="section-head reveal">
+      <h2>Cash Management</h2>
+      <p class="tagline">The banking products a company uses every day to hold and move its money. Made up of four areas: <a href="#accounts">accounts</a>, <a href="#payments">payments</a>, <a href="#collections">collections</a>, and <a href="#liquidity">liquidity management</a>.</p>
+    </div>
+  </section>
+
+  <!-- ============ 1. ACCOUNTS ============ -->
+  <section id="accounts" class="container">
+    <div class="section-head reveal">
+      <h2>Accounts</h2>
+      <p class="tagline">The bank accounts a business uses to hold its money &mdash; in SGD, in foreign currencies, or locked away for a fixed period to earn more interest.</p>
+    </div>
+    <div class="framework">
+      <article class="pillar what reveal">
+        <div class="pillar-head">
+          <span class="label">What it is</span>
+        <h3>Bank accounts, but built for businesses</h3>
+        </div>
+        <div class="pillar-body">
+          <p>Three flavours: an SGD operating account for daily flows, a multi-currency account for international businesses, and time deposits for surplus cash you can lock up at a higher rate.</p>
+        </div>
+      </article>
+      <article class="pillar problem reveal">
+        <div class="pillar-head">
+          <span class="label">Problem it solves</span>
+        <h3>A safe, accessible home for working capital</h3>
+        </div>
+        <div class="pillar-body">
+          <p>Every business needs somewhere safe to keep its cash, plugged into the rails that send and receive money. International ones also need to hold multiple currencies without converting back and forth.</p>
+        </div>
+      </article>
+      <article class="pillar earn reveal">
+        <div class="pillar-head">
+          <span class="label">How the bank earns</span>
+        <h3>The cheapest funding a bank can get</h3>
+        </div>
+        <div class="pillar-body">
+          <p>Money in current accounts earns the depositor almost nothing &mdash; the bank lends that same money out at much higher rates. The gap (<strong>Net Interest Margin</strong>) is the single biggest revenue line in transaction banking.</p>
+        </div>
+      </article>
+    </div>
+
+    <div class="products">
+
+      <article class="card reveal" id="p-mcba">
+        <div class="card-head">
+          <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="14" rx="2"/><path d="M2 10h20"/><path d="M16 14h2"/></svg></span>
+          <h3>Multi-Currency Business Account</h3>
+        </div>
+        <p class="scenario">Customers who import auto parts from Japan, sell them in Europe, and pay their Singapore team in SGD &mdash; tired of losing 1% to FX on every conversion home.</p>
+        <div class="row"><span class="tag what">What it is</span><span class="text">One account that holds up to 13 currencies at once &mdash; like 13 wallets on one card.</span></div>
+        <div class="row"><span class="tag problem">Problem it solves</span><span class="text">No more opening a separate account in every country, and no more losing 1&ndash;2% to FX on every conversion.</span></div>
+        <div class="row"><span class="tag earn">How the bank earns</span><span class="text">Each currency balance gets lent out, and the bank pockets the FX spread when customers eventually convert.</span></div>
+      </article>
+
+      <article class="card reveal" id="p-sgdca">
+        <div class="card-head">
+          <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg></span>
+          <h3>SGD Current Account</h3>
+        </div>
+        <p class="scenario">A founder incorporated her catering company yesterday and needs an account today to receive customer deposits and pay her chef on Monday.</p>
+        <div class="row"><span class="tag what">What it is</span><span class="text">The default business chequing account in SGD. Fees are usually waived above a minimum balance. Note: SDIC deposit insurance covers individuals and charities only &mdash; corporate accounts are not insured.</span></div>
+        <div class="row"><span class="tag problem">Problem it solves</span><span class="text">Without it, the business can't transact. Plugged into every Singapore payment rail (FAST, PayNow, GIRO, MEPS).</span></div>
+        <div class="row"><span class="tag earn">How the bank earns</span><span class="text">Money sitting here costs the bank almost nothing &mdash; and it gets lent out at full market rates.</span></div>
+      </article>
+
+      <article class="card reveal" id="p-fcca">
+        <div class="card-head">
+          <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="14" rx="2"/><path d="M2 10h20"/><path d="M8 14h2"/></svg></span>
+          <h3>Foreign Currency Call Account</h3>
+        </div>
+        <p class="scenario">A trader holds USD reserves they may need on a few hours' notice, but doesn't want the money sitting in a zero-interest current account.</p>
+        <div class="row"><span class="tag what">What it is</span><span class="text">A single-currency on-call account in USD, EUR, AUD, JPY, GBP, or another major FCY. Earns interest, but you can withdraw any time &mdash; no lock-up like a time deposit.</span></div>
+        <div class="row"><span class="tag problem">Problem it solves</span><span class="text">A middle ground between zero-yield current accounts and locked-up time deposits &mdash; useful for FCY-denominated working capital.</span></div>
+        <div class="row"><span class="tag earn">How the bank earns</span><span class="text">Spread &mdash; the bank pays a modest interest rate and lends the same currency out at higher rates.</span></div>
+      </article>
+
+      <article class="card reveal" id="p-td">
+        <div class="card-head">
+          <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+          <h3>Time Deposit (SGD &amp; FCY)</h3>
+        </div>
+        <p class="scenario">A profitable design agency has S$2M sitting idle for the next six months. The owner wants a bit of return without taking any market risk.</p>
+        <div class="row"><span class="tag what">What it is</span><span class="text">Lock your money up for a set period &mdash; one month, six months, etc. &mdash; and earn a higher, fixed rate than a current account. Available in SGD and ten foreign currencies.</span></div>
+        <div class="row"><span class="tag problem">Problem it solves</span><span class="text">Earns yield on cash that's just sitting there waiting to be used.</span></div>
+        <div class="row"><span class="tag earn">How the bank earns</span><span class="text">Pure spread &mdash; the bank pays you a fixed rate, then lends or invests that money at a higher rate.</span></div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ============ 2. PAYMENTS ============ -->
+  <section id="payments" class="container">
+    <div class="section-head reveal">
+      <h2>Payments</h2>
+      <p class="tagline">All the ways a business can send money out &mdash; instant local transfers, batch payroll, urgent high-value wires, cross-border payments, and corporate cards.</p>
+    </div>
+    <div class="framework">
+      <article class="pillar what reveal">
+        <div class="pillar-head">
+          <span class="label">What it is</span>
+        <h3>A menu of payment rails, each with a sweet spot</h3>
+        </div>
+        <div class="pillar-body">
+          <p>Instant local rails (FAST, PayNow), cheap batch rails (GIRO), high-value rails (MEPS), cross-border rails (SWIFT, International ACH), and card rails (purchasing cards).</p>
+        </div>
+      </article>
+      <article class="pillar problem reveal">
+        <div class="pillar-head">
+          <span class="label">Problem it solves</span>
+        <h3>The right rail for the right job</h3>
+        </div>
+        <div class="pillar-body">
+          <p>Paying 500 employees on the 25th, one urgent supplier on a Friday night, and a S$50M property settlement are three different jobs. Pick the wrong rail and you'll either overpay in fees or miss a deadline.</p>
+        </div>
+      </article>
+      <article class="pillar earn reveal">
+        <div class="pillar-head">
+          <span class="label">How the bank earns</span>
+        <h3>Fees on volume, spread on cross-currency</h3>
+        </div>
+        <div class="pillar-body">
+          <p>Most payment products earn a <strong>small fee per transaction</strong>. Cross-border payments add a meaningful <strong>FX margin</strong> (the bank's cut on the currency conversion) &mdash; usually the biggest line. Card payments earn <strong>interchange</strong> &mdash; a small percentage of each swipe paid by the merchant's bank to the card-issuing bank. And while the money is in transit, the bank gets to hold onto it &mdash; a little extra revenue from the brief float.</p>
+        </div>
+      </article>
+    </div>
+
+    <div class="products">
+
+      <article class="card reveal" id="p-fast">
+        <div class="card-head">
+          <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h8l-1 8 11-13h-8l1-7z"/></svg></span>
+          <h3>FAST</h3>
+        </div>
+        <p class="scenario">A construction firm's emergency rebar delivery arrives on a Friday evening. The supplier won't unload until he sees the money in his account.</p>
+        <div class="row"><span class="tag what">What it is</span><span class="text">Singapore's instant SGD payment rail. 24/7, including weekends. Per-transaction limits are set by each bank (typically S$200,000+ for corporates; some now offer up to S$1M).</span></div>
+        <div class="row"><span class="tag problem">Problem it solves</span><span class="text">Pay anyone in Singapore in seconds &mdash; no waiting for next business day, no calling the bank.</span></div>
+        <div class="row"><span class="tag earn">How the bank earns</span><span class="text">Small fee per transaction. Volume game.</span></div>
+      </article>
+
+      <article class="card reveal" id="p-paynow">
+        <div class="card-head">
+          <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="3"/><path d="M11 18h2"/></svg></span>
+          <h3>PayNow for Business</h3>
+        </div>
+        <p class="scenario">A retailer needs to refund an unhappy customer who only wants to share their mobile number &mdash; not their full bank details.</p>
+        <div class="row"><span class="tag what">What it is</span><span class="text">A layer on top of FAST that lets you pay using simple identifiers instead of long account numbers &mdash; UEN for businesses, mobile or NRIC for individuals.</span></div>
+        <div class="row"><span class="tag problem">Problem it solves</span><span class="text">Removes the friction (and typos) of exchanging account numbers. Critical for refunds, walk-up payments, and customer onboarding.</span></div>
+        <div class="row"><span class="tag earn">How the bank earns</span><span class="text">Same fee model as FAST &mdash; but PayNow's convenience drives much higher volume.</span></div>
+      </article>
+
+      <article class="card reveal" id="p-giro">
+        <div class="card-head">
+          <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg></span>
+          <h3>GIRO</h3>
+        </div>
+        <p class="scenario">Salaries for 800 employees, paid on the 25th of every month. Not urgent &mdash; but it absolutely must arrive.</p>
+        <div class="row"><span class="tag what">What it is</span><span class="text">A batch payment system. Upload a file today; the bank processes overnight; money lands 2&ndash;3 business days later. Cheap and reliable.</span></div>
+        <div class="row"><span class="tag problem">Problem it solves</span><span class="text">Perfect for high-volume, scheduled payments &mdash; payroll, dividends, supplier batches, tax instalments.</span></div>
+        <div class="row"><span class="tag earn">How the bank earns</span><span class="text">Tiny fee per payment, enormous volume. The 2-day settlement window holds the money with the bank a little longer.</span></div>
+      </article>
+
+      <article class="card reveal" id="p-meps">
+        <div class="card-head">
+          <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h18M9 6l-6 6 6 6M15 6l6 6-6 6"/></svg></span>
+          <h3>MAS Electronic Payment System (MEPS)</h3>
+        </div>
+        <p class="scenario">A property developer needs to settle a S$50M land purchase by 5pm today. No second chances.</p>
+        <div class="row"><span class="tag what">What it is</span><span class="text">Singapore's central-bank same-day rail for huge, time-critical transfers. No upper limit. Final and irrevocable.</span></div>
+        <div class="row"><span class="tag problem">Problem it solves</span><span class="text">FAST stops at S$200,000 per transaction. For property settlements, large acquisitions, and any seven-figure wire, MEPS is the only option.</span></div>
+        <div class="row"><span class="tag earn">How the bank earns</span><span class="text">A higher per-transaction fee (the value justifies it), plus interest on the huge sums sitting with the bank during the few hours between sending and settlement.</span></div>
+      </article>
+
+      <article class="card reveal" id="p-network">
+        <div class="card-head">
+          <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a13 13 0 0 1 0 18M12 3a13 13 0 0 0 0 18"/></svg></span>
+          <h3>Network Transfer</h3>
+        </div>
+        <p class="scenario">A treasurer at a Singapore HQ needs to move USD to the company's Hong Kong subsidiary &mdash; both held at the same bank.</p>
+        <div class="row"><span class="tag what">What it is</span><span class="text">A flat-fee transfer between the bank's own branches and subsidiaries across the region (Hong Kong, Malaysia, Indonesia, China, etc.), settling the same day.</span></div>
+        <div class="row"><span class="tag problem">Problem it solves</span><span class="text">Skips the global wire system &mdash; which charges $20&ndash;40 to each &ldquo;middleman&rdquo; bank that relays the payment along, and takes 1&ndash;2 days &mdash; for transfers between branches of the same group.</span></div>
+        <div class="row"><span class="tag earn">How the bank earns</span><span class="text">A flat fee per transfer, plus deeper relationship lock-in across multiple markets.</span></div>
+      </article>
+
+      <article class="card reveal" id="p-tt">
+        <div class="card-head">
+          <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/></svg></span>
+          <h3>Outward Telegraphic Transfer</h3>
+        </div>
+        <p class="scenario">A trading company pays &euro;120,000 to a German machinery supplier for a CNC mill.</p>
+        <div class="row"><span class="tag what">What it is</span><span class="text">A regular international wire over the global SWIFT network. 60+ currencies, tracked end-to-end with SWIFT gpi.</span></div>
+        <div class="row"><span class="tag problem">Problem it solves</span><span class="text">The default rail when no cheaper local option exists for the destination country.</span></div>
+        <div class="row"><span class="tag earn">How the bank earns</span><span class="text">A flat fee, plus FX spread on the conversion &mdash; usually where the real money is.</span></div>
+      </article>
+
+      <article class="card reveal" id="p-iach">
+        <div class="card-head">
+          <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l9 6 9-6"/><rect x="3" y="5" width="18" height="14" rx="2"/></svg></span>
+          <h3>International ACH (IACH)</h3>
+        </div>
+        <p class="scenario">A payroll firm pays USD salaries to remote staff based in the United States.</p>
+        <div class="row"><span class="tag what">What it is</span><span class="text">A cheaper alternative to SWIFT for small cross-border payments. Drops your money into the destination country's local rail (ACH in the US, BACS in the UK, etc.).</span></div>
+        <div class="row"><span class="tag problem">Problem it solves</span><span class="text">Slashes the cost of low-value international payments &mdash; great for global payroll and small supplier payments.</span></div>
+        <div class="row"><span class="tag earn">How the bank earns</span><span class="text">Flat fee plus a smaller but reliable FX spread on the converted leg.</span></div>
+      </article>
+
+      <article class="card reveal" id="p-vpc">
+        <div class="card-head">
+          <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 11h20M6 16h4"/></svg></span>
+          <h3>Virtual Purchasing Card</h3>
+        </div>
+        <p class="scenario">A finance manager needs to give the marketing team a one-time card with a S$5,000 cap for next month's industry conference.</p>
+        <div class="row"><span class="tag what">What it is</span><span class="text">A digital, single-use or limited-use card. Set the spending limit, merchant category, and expiry up front. No physical plastic.</span></div>
+        <div class="row"><span class="tag problem">Problem it solves</span><span class="text">Every card is tied to a specific purpose with a built-in limit &mdash; no more loose physical corporate cards.</span></div>
+        <div class="row"><span class="tag earn">How the bank earns</span><span class="text">Interchange on every swipe, per-card programme fees, and interest on the balance between spend and settlement.</span></div>
+      </article>
+
+      <article class="card reveal" id="p-debit">
+        <div class="card-head">
+          <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 11h20"/><path d="M6 16h6"/></svg></span>
+          <h3>Business Debit Card</h3>
+        </div>
+        <p class="scenario">A small services firm wants to give its operations manager a physical card for petty cash &mdash; office supplies, taxi fares, client lunches &mdash; with the spend pulled straight from the business current account.</p>
+        <div class="row"><span class="tag what">What it is</span><span class="text">A Visa/Mastercard debit card linked directly to the SGD Current Account. Tap, swipe, or use online &mdash; no credit line, no monthly card statement to settle.</span></div>
+        <div class="row"><span class="tag problem">Problem it solves</span><span class="text">Lets staff make everyday business purchases without involving petty cash or a corporate credit card &mdash; with built-in spend caps and per-card controls.</span></div>
+        <div class="row"><span class="tag earn">How the bank earns</span><span class="text">Interchange on every transaction. No credit risk, since the money comes straight from the company's own account.</span></div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ============ 3. COLLECTIONS ============ -->
+  <section id="collections" class="container">
+    <div class="section-head reveal">
+      <h2>Collections</h2>
+      <p class="tagline">All the ways a business can receive money in &mdash; and the tools that automatically match each incoming payment to the right customer and invoice.</p>
+    </div>
+    <div class="framework">
+      <article class="pillar what reveal">
+        <div class="pillar-head">
+          <span class="label">What it is</span>
+        <h3>Acceptance rails plus reconciliation tools</h3>
+        </div>
+        <div class="pillar-body">
+          <p>QR codes for walk-in customers, card terminals at the till, direct-debit mandates for subscriptions, virtual account numbers tied to specific payers, and APIs that ping the company's systems the second a payment arrives.</p>
+        </div>
+      </article>
+      <article class="pillar problem reveal">
+        <div class="pillar-head">
+          <span class="label">Problem it solves</span>
+        <h3>Two problems at once</h3>
+        </div>
+        <div class="pillar-body">
+          <p>First: accept whatever payment method the customer wants to use. Second: automatically match the incoming money to the right invoice, so the finance team isn't reconciling 5,000 transactions by hand at month-end.</p>
+        </div>
+      </article>
+      <article class="pillar earn reveal">
+        <div class="pillar-head">
+          <span class="label">How the bank earns</span>
+        <h3>A slice of every transaction, plus tools</h3>
+        </div>
+        <div class="pillar-body">
+          <p>Card and QR acceptance earn a <strong>merchant discount rate</strong> &mdash; a small percentage of every transaction. Reconciliation tools earn monthly subscriptions. And every collection product brings cash in faster, so it sits with the bank longer.</p>
+        </div>
+      </article>
+    </div>
+
+    <div class="products">
+
+      <article class="card reveal" id="p-egiro">
+        <div class="card-head">
+          <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12h6M12 9v6"/><circle cx="12" cy="12" r="9"/></svg></span>
+          <h3>eGIRO</h3>
+        </div>
+        <p class="scenario">An insurer wants new policyholders to authorise monthly auto-debit during online sign-up &mdash; not three weeks later via paper form.</p>
+        <div class="row"><span class="tag what">What it is</span><span class="text">A fully digital GIRO direct-debit authorisation. Customers approve in minutes, not weeks.</span></div>
+        <div class="row"><span class="tag problem">Problem it solves</span><span class="text">Removes the paper-form drop-off that costs subscription businesses customers &mdash; insurance, telco, gym, SaaS, anything recurring.</span></div>
+        <div class="row"><span class="tag earn">How the bank earns</span><span class="text">Setup &amp; maintenance fees, plus a per-debit fee on every collection.</span></div>
+      </article>
+
+      <article class="card reveal" id="p-va">
+        <div class="card-head">
+          <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 9h2M7 13h6M7 17h4"/></svg></span>
+          <h3>Virtual Account</h3>
+        </div>
+        <p class="scenario">A property manager collects rent from 5,000 tenants and used to lose hours manually matching payments to the right unit.</p>
+        <div class="row"><span class="tag what">What it is</span><span class="text">One real account with thousands of unique account numbers underneath &mdash; each one assigned to a specific customer.</span></div>
+        <div class="row"><span class="tag problem">Problem it solves</span><span class="text">When money arrives, the account number itself tells you who paid. No more manual matching.</span></div>
+        <div class="row"><span class="tag earn">How the bank earns</span><span class="text">Monthly fees per virtual account, plus a deeper deposit relationship.</span></div>
+      </article>
+
+      <article class="card reveal" id="p-onecollect">
+        <div class="card-head">
+          <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="7" height="7"/><rect x="13" y="4" width="7" height="7"/><rect x="4" y="13" width="7" height="7"/><rect x="15" y="15" width="5" height="5"/></svg></span>
+          <h3>OneCollect</h3>
+        </div>
+        <p class="scenario">A hawker stall wants to accept PayNow from locals and Alipay from Chinese tourists &mdash; from a single QR code on a sign.</p>
+        <div class="row"><span class="tag what">What it is</span><span class="text">A merchant phone app that accepts QR payments from PayNow, Alipay+, WeChat Pay, UnionPay, and ShopeePay.</span></div>
+        <div class="row"><span class="tag problem">Problem it solves</span><span class="text">One QR sticker on the sign instead of five.</span></div>
+        <div class="row"><span class="tag earn">How the bank earns</span><span class="text">A small slice of each transaction (the merchant discount rate), varying by wallet.</span></div>
+      </article>
+
+      <article class="card reveal" id="p-pos">
+        <div class="card-head">
+          <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 7h6M9 11h6M9 15h4"/></svg></span>
+          <h3>Point-of-Sale Terminal</h3>
+        </div>
+        <p class="scenario">A restaurant wants a single device at the till that accepts any card, any wallet, any way the customer wants to pay.</p>
+        <div class="row"><span class="tag what">What it is</span><span class="text">The countertop or handheld card terminal &mdash; tap, swipe, or insert any major card or contactless wallet (Visa, Mastercard, PayNow, Alipay+, WeChat).</span></div>
+        <div class="row"><span class="tag problem">Problem it solves</span><span class="text">One device handles every payment type &mdash; no separate hardware per scheme.</span></div>
+        <div class="row"><span class="tag earn">How the bank earns</span><span class="text">A percentage of every transaction, plus monthly terminal rental.</span></div>
+      </article>
+
+      <article class="card reveal" id="p-deposit">
+        <div class="card-head">
+          <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M12 10v4M9 12h6"/></svg></span>
+          <h3>Business Deposit Card</h3>
+        </div>
+        <p class="scenario">A retail manager needs to deposit S$8,000 cash at 11pm without holding it overnight in the store.</p>
+        <div class="row"><span class="tag what">What it is</span><span class="text">A card that lets staff deposit cash at any Cash Deposit Machine (CDM), 24/7, straight into the company account.</span></div>
+        <div class="row"><span class="tag problem">Problem it solves</span><span class="text">No risky overnight cash on premises; no branch visits during business hours.</span></div>
+        <div class="row"><span class="tag earn">How the bank earns</span><span class="text">A small per-deposit service fee, plus the cash lands in the bank's books faster than waiting for an armoured-truck pickup to count and settle it.</span></div>
+      </article>
+
+      <article class="card reveal" id="p-creditapi">
+        <div class="card-head">
+          <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M10 4l-6 8h5l-1 8 7-10h-5z"/></svg></span>
+          <h3>Credit Notification APIs</h3>
+        </div>
+        <p class="scenario">An e-commerce platform wants to release a digital product the moment a customer's bank transfer lands &mdash; not 30 minutes later when someone checks the statement.</p>
+        <div class="row"><span class="tag what">What it is</span><span class="text">A real-time webhook that fires the moment a payment arrives, pushing the alert straight into the company's own systems. Part of the bank's wider API catalogue (payments, FX, account info, sanctions screening).</span></div>
+        <div class="row"><span class="tag problem">Problem it solves</span><span class="text">Removes the delay between getting paid and acting on it &mdash; instant order release, instant service activation.</span></div>
+        <div class="row"><span class="tag earn">How the bank earns</span><span class="text">API subscription fees, plus an integration so deep the company can't easily switch banks.</span></div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ============ 4. LIQUIDITY ============ -->
+  <section id="liquidity" class="container">
+    <div class="section-head reveal">
+      <h2>Liquidity Management</h2>
+      <p class="tagline">Tools that move cash automatically across a company's many accounts and subsidiaries, so idle balances and overdraft costs are kept to a minimum.</p>
+    </div>
+    <div class="framework">
+      <article class="pillar what reveal">
+        <div class="pillar-head">
+          <span class="label">What it is</span>
+        <h3>Tools that auto-move (or virtually combine) cash across accounts</h3>
+        </div>
+        <div class="pillar-body">
+          <p>Rule-based products that move cash &mdash; or just <em>treat it as if it's been moved</em> &mdash; across accounts, entities, and countries, so the group runs with minimum surplus and minimum overdraft.</p>
+        </div>
+      </article>
+      <article class="pillar problem reveal">
+        <div class="pillar-head">
+          <span class="label">Problem it solves</span>
+        <h3>Fragmented cash costs real money</h3>
+        </div>
+        <div class="pillar-body">
+          <p>Big companies have dozens of accounts across many countries. Without these tools, one subsidiary sits on $20M idle while another pays 6% overdraft interest. Treasury could fix it manually &mdash; but only at high effort, never in real time.</p>
+        </div>
+      </article>
+      <article class="pillar earn reveal">
+        <div class="pillar-head">
+          <span class="label">How the bank earns</span>
+        <h3>Platform fees and much deeper deposits</h3>
+        </div>
+        <div class="pillar-body">
+          <p>Setup and monthly platform fees are direct revenue. The bigger prize: balances get <strong>concentrated with one bank</strong>, making it the obvious choice for every other product too.</p>
+        </div>
+      </article>
+    </div>
+
+    <div class="products">
+
+      <article class="card reveal" id="p-sweep">
+        <div class="card-head">
+          <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l5 8a5 5 0 1 1-10 0z"/></svg></span>
+          <h3>Cash Sweep</h3>
+        </div>
+        <p class="scenario">A regional treasurer wants every subsidiary's leftover cash to flow into the parent's central account by end-of-day, automatically, with no manual intervention.</p>
+        <div class="row"><span class="tag what">What it is</span><span class="text">Programmed rules that move cash above (or below) a threshold to (or from) a header account &mdash; intraday or end-of-day, on a schedule.</span></div>
+        <div class="row"><span class="tag problem">Problem it solves</span><span class="text">No more manual treasury work; no entity is overdrawing while another sits on idle cash.</span></div>
+        <div class="row"><span class="tag earn">How the bank earns</span><span class="text">Setup and monthly platform fees. Bigger prize: deposits pile up at the parent account, giving the bank a much larger pool of cheap funding to lend out.</span></div>
+      </article>
+
+      <article class="card reveal" id="p-io">
+        <div class="card-head">
+          <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17l5-5 4 4 5-7"/><path d="M14 9h5v5"/></svg></span>
+          <h3>Interest Optimisation</h3>
+        </div>
+        <p class="scenario">A holding company doesn't want to legally pool subsidiary cash (taxes, audits, regulators get involved) &mdash; but still wants the yield benefit of looking like one big depositor.</p>
+        <div class="row"><span class="tag what">What it is</span><span class="text">The bank pretends, for interest-calculation purposes only, that all the entities' accounts are one big balance &mdash; and pays a better rate accordingly.</span></div>
+        <div class="row"><span class="tag problem">Problem it solves</span><span class="text">Captures the yield bump from pooling without any of the legal, tax, or accounting mess of actually moving money.</span></div>
+        <div class="row"><span class="tag earn">How the bank earns</span><span class="text">The bank still keeps a spread on the optimised rate; very sticky multi-entity relationship.</span></div>
+      </article>
+
+      <article class="card reveal" id="p-pool">
+        <div class="card-head">
+          <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="12" r="4"/><circle cx="16" cy="12" r="4"/></svg></span>
+          <h3>Notional Pooling</h3>
+        </div>
+        <p class="scenario">Subsidiary A has +$5M. Subsidiary B has &minus;$3M. The CFO wants overdraft interest charged on the net $0 position, not on B's full $3M overdraft.</p>
+        <div class="row"><span class="tag what">What it is</span><span class="text">The bank calculates interest on the netted balance across entities &mdash; rather than charging full interest on each entity's gross position. No actual money moves.</span></div>
+        <div class="row"><span class="tag problem">Problem it solves</span><span class="text">Slashes group-wide interest expense without triggering inter-company loans or breaching legal-entity boundaries. Note: notional pooling is not permitted in the US and is restricted in several other jurisdictions (e.g., China, India) &mdash; structures are typically booked in pooling-friendly hubs like Singapore, Hong Kong, the Netherlands, or the UK.</span></div>
+        <div class="row"><span class="tag earn">How the bank earns</span><span class="text">Setup and monthly platform fees, plus extreme stickiness &mdash; the bank becomes the group's primary banker.</span></div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ============ UMBRELLA: TRADE & WORKING CAPITAL ============ -->
+  <section id="trade-wc" class="container">
+    <div class="section-head reveal">
+      <h2>Trade &amp; Working Capital</h2>
+      <p class="tagline">The banking products that help a company pay for goods, ship them across borders, and bridge the cash gap between buying stock and getting paid for it. Made up of two areas: <a href="#trade">trade finance</a> and <a href="#scf">supply chain finance</a>.</p>
+    </div>
+  </section>
+
+  <!-- ============ 5. TRADE FINANCE ============ -->
+  <section id="trade" class="container">
+    <div class="section-head reveal">
+      <h2>Trade Finance</h2>
+      <p class="tagline">Banking products that let a buyer and seller in different countries safely complete a trade. The bank guarantees payment in exchange for shipping documents, and lends short-term cash to bridge the gap between paying suppliers and getting paid by customers.</p>
+    </div>
+    <div class="framework">
+      <article class="pillar what reveal">
+        <div class="pillar-head">
+          <span class="label">What it is</span>
+        <h3>The bank standing in the middle of international trade</h3>
+        </div>
+        <div class="pillar-body">
+          <p>A toolkit of products with formal names &mdash; Letters of Credit (the bank promises the seller it will pay once shipping documents arrive), documentary collections (the bank releases documents only after the buyer pays or commits to pay), trust receipts (the bank lets the buyer take goods on credit while the bank still owns them), invoice financing (the bank advances cash against unpaid invoices), and bank guarantees. The bank acts as the trusted middleman &mdash; and lends short-term cash to bridge the gap between paying suppliers and getting paid by customers.</p>
+        </div>
+      </article>
+      <article class="pillar problem reveal">
+        <div class="pillar-head">
+          <span class="label">Problem it solves</span>
+        <h3>The trust gap, and the timing gap</h3>
+        </div>
+        <div class="pillar-body">
+          <p>A Vietnam seller doesn't trust a Singapore buyer enough to ship US$2M of timber on credit. The buyer doesn't want to pay before seeing the goods. Trade finance bridges that trust gap &mdash; and the timing gap, since the buyer pays the supplier on shipment but doesn't collect from its own customer for 90 days.</p>
+        </div>
+      </article>
+      <article class="pillar earn reveal">
+        <div class="pillar-head">
+          <span class="label">How the bank earns</span>
+        <h3>Multiple fees per deal, plus interest</h3>
+        </div>
+        <div class="pillar-body">
+          <p>Issuance fees on the document, commission on guarantees, handling fees per step, plus <strong>interest</strong> on any short-term loan. A single shipment can earn four or five separate fees on top of a financing margin.</p>
+        </div>
+      </article>
+    </div>
+
+    <div class="products">
+
+      <article class="card reveal" id="p-tradesuite">
+        <div class="card-head">
+          <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18h18"/><path d="M5 18l2-8h10l2 8"/><path d="M9 10V6h6v4"/></svg></span>
+          <h3>Trade Finance Suite</h3>
+        </div>
+        <p class="scenario">A Singapore furniture importer buys US$500K of timber from an Indonesian sawmill. The sawmill won't ship without a payment guarantee. The importer won't pay until the timber is on a boat.</p>
+        <div class="row"><span class="tag what">What it is</span><span class="text">A toolbox of products &mdash; Letters of Credit, documentary collections, trust receipts, invoice financing &mdash; that lets the bank stand in the middle of the deal and handle both the trust problem and the cash-timing problem.</span></div>
+        <div class="row"><span class="tag problem">Problem it solves</span><span class="text">The Letter of Credit gives the sawmill confidence that the bank (not the buyer) will pay, as long as the shipping documents match the agreed terms. Trust receipts let the importer take possession of the timber on credit, sell it to retailers, then repay the bank from the proceeds. Both follow a global rulebook (called UCP 600) that every major bank recognises.</span></div>
+        <div class="row"><span class="tag earn">How the bank earns</span><span class="text">Issuance fee on the LC, document handling fees, plus interest on any short-term financing &mdash; multiple revenue lines per deal.</span></div>
+      </article>
+
+      <article class="card reveal" id="p-invoicefin">
+        <div class="card-head">
+          <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-6-3-6 3z"/><path d="M9 9h6M9 13h6"/></svg></span>
+          <h3>Invoice Financing</h3>
+        </div>
+        <p class="scenario">An electronics distributor has S$2M in unpaid customer invoices on 60-day terms &mdash; but needs cash this week to settle suppliers and keep the warehouse stocked.</p>
+        <div class="row"><span class="tag what">What it is</span><span class="text">A short-term loan secured against unpaid invoices. Comes in two flavours: <strong>Sales</strong> (cash advance against invoices you've issued to your customers) and <strong>Purchase</strong> (cash advance against invoices you owe your suppliers).</span></div>
+        <div class="row"><span class="tag problem">Problem it solves</span><span class="text">Turns receivables and payables into working capital &mdash; the company doesn't have to wait the full payment cycle for cash to flow back in.</span></div>
+        <div class="row"><span class="tag earn">How the bank earns</span><span class="text">Interest on the advance, plus an arrangement fee. Risk is bounded by the underlying invoice.</span></div>
+      </article>
+
+      <article class="card reveal" id="p-bg">
+        <div class="card-head">
+          <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 4v5c0 5-3 8-8 9-5-1-8-4-8-9V7z"/></svg></span>
+          <h3>Banker's Guarantee / Standby LC</h3>
+        </div>
+        <p class="scenario">A contractor wants to bid on a US$20M government tender. The tender rules require a 5% bid bond &mdash; but the contractor doesn't want US$1M of its cash tied up for months.</p>
+        <div class="row"><span class="tag what">What it is</span><span class="text">A written promise from the bank: &ldquo;If our customer fails to deliver, we'll pay you instead.&rdquo; Performance bonds, bid bonds, and advance-payment guarantees are all variants.</span></div>
+        <div class="row"><span class="tag problem">Problem it solves</span><span class="text">Lets the company prove its financial strength to a counterparty without locking up cash collateral on every promise.</span></div>
+        <div class="row"><span class="tag earn">How the bank earns</span><span class="text">A commission of 1&ndash;2% per year on the guarantee amount &mdash; plus a signed promise from the customer to repay the bank in full if the guarantee ever gets paid out. The bank puts up no cash unless the guarantee is actually called.</span></div>
+      </article>
+
+    </div>
+
+    <div class="cta-callout reveal">
+      <div class="cta-text">
+        <strong>Want the deep dive on Trade Finance?</strong>
+        <span>Visit <em>Trade Finance 101</em> &mdash; a dedicated companion site with full product mechanics, worked examples, and the documentation flow behind every deal.</span>
+      </div>
+      <a class="cta-button" href="https://tf101.netlify.app/" target="_blank" rel="noopener">
+        Visit Trade Finance 101
+        <span class="arrow" aria-hidden="true">&rarr;</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- ============ 6. SUPPLY CHAIN FINANCE ============ -->
+  <section id="scf" class="container">
+    <div class="section-head reveal">
+      <h2>Supply Chain Finance</h2>
+      <p class="tagline">A programme where the bank pays a company's suppliers early at a small discount, then collects the full invoice amount from the buyer on the original due date.</p>
+    </div>
+    <div class="framework">
+      <article class="pillar what reveal">
+        <div class="pillar-head">
+          <span class="label">What it is</span>
+        <h3>A program that pays suppliers early at a small discount</h3>
+        </div>
+        <div class="pillar-body">
+          <p>The bank pays an approved supplier early at a small discount, then collects the full invoice from the buyer on the original due date. Variants finance either the seller's receivables or the buyer's payables.</p>
+        </div>
+      </article>
+      <article class="pillar problem reveal">
+        <div class="pillar-head">
+          <span class="label">Problem it solves</span>
+        <h3>Misaligned working capital across the chain</h3>
+        </div>
+        <div class="pillar-body">
+          <p>Suppliers want cash now. Buyers want to delay. SCF gives both: suppliers get paid on day 10 instead of day 90, and the buyer keeps its 90-day terms.</p>
+        </div>
+      </article>
+      <article class="pillar earn reveal">
+        <div class="pillar-head">
+          <span class="label">How the bank earns</span>
+        <h3>A discount margin, priced to the buyer's credit</h3>
+        </div>
+        <div class="pillar-body">
+          <p>The bank earns a <strong>discount margin</strong> on every advanced invoice &mdash; the small slice it shaves off the invoice value when it pays the supplier early. Because the ultimate payer is usually a big, reliably creditworthy buyer (the kind credit-rating agencies call &ldquo;investment grade&rdquo;), the actual risk is low &mdash; but the bank can still price the deal as if it were lending to the smaller supplier. Favourable economics.</p>
+        </div>
+      </article>
+    </div>
+
+    <div class="products">
+
+      <article class="card reveal" id="p-scf">
+        <div class="card-head">
+          <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a3 3 0 0 1 0-4l3-3a3 3 0 1 1 4 4l-1 1"/><path d="M14 11a3 3 0 0 1 0 4l-3 3a3 3 0 1 1-4-4l1-1"/></svg></span>
+          <h3>Receivables &amp; Supplier Finance</h3>
+        </div>
+        <p class="scenario">A multinational tells 200 suppliers: &ldquo;Wait 90 days for our payment, or get paid on day 10 by our bank for a small discount.&rdquo; Suppliers love it.</p>
+        <div class="row"><span class="tag what">What it is</span><span class="text">A portal where suppliers see the buyer's approved invoices and can click to take early payment from the bank at a small discount.</span></div>
+        <div class="row"><span class="tag problem">Problem it solves</span><span class="text">Suppliers get cash early; the buyer keeps its long payment terms; the chain relationship improves on both sides.</span></div>
+        <div class="row"><span class="tag earn">How the bank earns</span><span class="text">A small discount taken from each invoice it pays early &mdash; priced as if it were lending to the smaller supplier, even though the real risk is on the big, creditworthy buyer.</span></div>
+      </article>
+
+      <article class="card reveal" id="p-arp">
+        <div class="card-head">
+          <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h13l5 5-5 5H3z"/><path d="M3 7v10"/></svg></span>
+          <h3>Accounts Receivable Purchase</h3>
+        </div>
+        <p class="scenario">A Singapore exporter ships S$5M of components to a creditworthy MNC on 180-day terms but wants the cash off its books today &mdash; not just an advance against them.</p>
+        <div class="row"><span class="tag what">What it is</span><span class="text">The bank buys the receivables outright (a &ldquo;true sale&rdquo;) for up to 360 days. Different from invoice financing &mdash; the bank takes on the buyer's payment risk and the invoices come off the seller's balance sheet.</span></div>
+        <div class="row"><span class="tag problem">Problem it solves</span><span class="text">Cleans up the seller's balance sheet, improves working-capital ratios, and removes credit risk on the buyer.</span></div>
+        <div class="row"><span class="tag earn">How the bank earns</span><span class="text">A discount on the purchase price (the bank pays less than face value), priced on the buyer's credit quality.</span></div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ============ 7. FX & RISK ============ -->
+  <section id="fx" class="container">
+    <div class="section-head reveal">
+      <h2>Foreign Exchange (FX)</h2>
+      <p class="tagline">Tools to convert currencies and lock in exchange rates ahead of time, so a company isn't exposed to sudden swings in the FX market.</p>
+    </div>
+    <div class="framework">
+      <article class="pillar what reveal">
+        <div class="pillar-head">
+          <span class="label">What it is</span>
+        <h3>Pricing, converting, and locking in exchange rates</h3>
+        </div>
+        <div class="pillar-body">
+          <p>Three building blocks: <em>spot</em> trades that convert currency at today's rate, <em>forwards and swaps</em> that lock in tomorrow's rate today, and <em>options</em> that act like insurance &mdash; pay a small premium now, only use the protection if the market moves against you. Together they let companies convert currencies on demand and take the risk of nasty surprises off the table.</p>
+        </div>
+      </article>
+      <article class="pillar problem reveal">
+        <div class="pillar-head">
+          <span class="label">Problem it solves</span>
+        <h3>Currency risk is existential for international businesses</h3>
+        </div>
+        <div class="pillar-body">
+          <p>A company earning in USD and spending in SGD lives or dies by the exchange rate. A 5% adverse swing on a US$50M cost base is US$2.5M off the bottom line. Hedging takes that risk off the table &mdash; you fix tomorrow's rate today.</p>
+        </div>
+      </article>
+      <article class="pillar earn reveal">
+        <div class="pillar-head">
+          <span class="label">How the bank earns</span>
+        <h3>The spread, on every single trade</h3>
+        </div>
+        <div class="pillar-body">
+          <p>Every conversion earns a spread &mdash; the gap between the bank's wholesale rate and the rate quoted to the customer. Forwards, swaps, and options each add their own hedging margin.</p>
+        </div>
+      </article>
+    </div>
+
+    <div class="products">
+
+      <article class="card reveal" id="p-fx">
+        <div class="card-head">
+          <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12c3-5 7-5 9 0s6 5 9 0"/></svg></span>
+          <h3>FX Contract Booking</h3>
+        </div>
+        <p class="scenario">A treasurer needs to convert US$500,000 to SGD this morning &mdash; she wants the live rate now, not a phone call back from a dealer.</p>
+        <div class="row"><span class="tag what">What it is</span><span class="text">A self-service FX dealing screen with live, streaming rates. Click to convert.</span></div>
+        <div class="row"><span class="tag problem">Problem it solves</span><span class="text">No phone tag with the dealing desk for small and mid-sized conversions. Transparent, repeatable pricing.</span></div>
+        <div class="row"><span class="tag earn">How the bank earns</span><span class="text">A spread on every booked trade.</span></div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ============ 9. CHANNELS ============ -->
+  <section id="channels" class="container">
+    <div class="section-head reveal">
+      <h2>Channels &amp; Connectivity</h2>
+      <p class="tagline">The web portal, mobile app, file-transfer pipes, and APIs that connect a company's people and systems to the bank.</p>
+    </div>
+    <div class="framework">
+      <article class="pillar what reveal">
+        <div class="pillar-head">
+          <span class="label">What it is</span>
+        <h3>Web portals, mobile apps, file transfers, and APIs</h3>
+        </div>
+        <div class="pillar-body">
+          <p>The web portal treasury logs into, the mobile app senior staff approve from, the automatic file-transfer pipes from accounting software, and the APIs that let the company's systems talk directly to the bank.</p>
+        </div>
+      </article>
+      <article class="pillar problem reveal">
+        <div class="pillar-head">
+          <span class="label">Problem it solves</span>
+        <h3>Friction is the silent killer of banking usage</h3>
+        </div>
+        <div class="pillar-body">
+          <p>Nobody wants to manually re-type 5,000 payments. Nobody wants to wait for the boss to be back at her desk to release a wire. The smoother the channel, the more transactions happen &mdash; and the more wired-in the bank becomes.</p>
+        </div>
+      </article>
+      <article class="pillar earn reveal">
+        <div class="pillar-head">
+          <span class="label">How the bank earns</span>
+        <h3>Mostly indirect &mdash; but the most powerful lever</h3>
+        </div>
+        <div class="pillar-body">
+          <p>Direct channel fees are modest. The real value: channels <strong>drive transaction volume</strong> across every other product, and deep integrations (especially file transfers and APIs) make the bank <strong>operationally painful to replace</strong>.</p>
+        </div>
+      </article>
+    </div>
+
+    <div class="products">
+
+      <article class="card reveal" id="p-portal">
+        <div class="card-head">
+          <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg></span>
+          <h3>Enterprise Web Portal</h3>
+        </div>
+        <p class="scenario">A regional treasurer at a holding company logs in once each morning to oversee cash, approvals, and FX across 15 subsidiaries in six countries.</p>
+        <div class="row"><span class="tag what">What it is</span><span class="text">The flagship web portal for big corporates &mdash; payments, collections, trade documents, FX, liquidity, and reporting all in one place.</span></div>
+        <div class="row"><span class="tag problem">Problem it solves</span><span class="text">One log-in instead of fifteen. Built-in approval workflows that match the company's own controls &mdash; e.g. one person prepares a payment, a second person reviews and approves it (a &ldquo;maker/checker&rdquo; flow), with limits on how much each role can authorise.</span></div>
+        <div class="row"><span class="tag earn">How the bank earns</span><span class="text">Indirect &mdash; drives volume across every other product. Very high stickiness once a treasury runs on it.</span></div>
+      </article>
+
+      <article class="card reveal" id="p-mobile">
+        <div class="card-head">
+          <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M11 18h2"/></svg></span>
+          <h3>Business App</h3>
+        </div>
+        <p class="scenario">A managing director is on a flight to Tokyo and needs to approve a US$2M payment from her phone before takeoff.</p>
+        <div class="row"><span class="tag what">What it is</span><span class="text">A mobile-optimised companion to the portal, focused on viewing balances and approving transactions on the go.</span></div>
+        <div class="row"><span class="tag problem">Problem it solves</span><span class="text">Removes the bottleneck of senior approvers being away from their desks.</span></div>
+        <div class="row"><span class="tag earn">How the bank earns</span><span class="text">Indirect &mdash; but every minute of friction removed means another transaction completed across the bank's fee-earning products.</span></div>
+      </article>
+
+      <article class="card reveal" id="p-h2h">
+        <div class="card-head">
+          <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h6M14 12h6"/><path d="M7 9l-3 3 3 3M17 9l3 3-3 3"/></svg></span>
+          <h3>Host-to-Host (H2H)</h3>
+        </div>
+        <p class="scenario">A payroll bureau processes 50,000 salaries each month and isn't about to type them into a portal one by one.</p>
+        <div class="row"><span class="tag what">What it is</span><span class="text">A secure automated file-transfer pipe between the company's accounting system and the bank, using standard formats like ISO 20022 and MT940.</span></div>
+        <div class="row"><span class="tag problem">Problem it solves</span><span class="text">Removes manual file handling for high-volume payments and statements. Straight-through processing, no humans in between.</span></div>
+        <div class="row"><span class="tag earn">How the bank earns</span><span class="text">Setup and monthly connection fees, plus per-transaction revenue on the enormous volumes that flow over the pipe.</span></div>
+      </article>
+
+      <article class="card reveal" id="p-api">
+        <div class="card-head">
+          <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6l-4 6 4 6M16 6l4 6-4 6M14 4l-4 16"/></svg></span>
+          <h3>Banking APIs (Developer Portal)</h3>
+        </div>
+        <p class="scenario">An e-commerce platform wants to issue refunds and pull live account balance from inside its own admin panel &mdash; no banking portal in sight.</p>
+        <div class="row"><span class="tag what">What it is</span><span class="text">A REST API catalogue &mdash; developers can initiate payments, check balances, look up transaction status, and receive payment alerts directly from their own code.</span></div>
+        <div class="row"><span class="tag problem">Problem it solves</span><span class="text">Embeds banking deep into the company's tech stack &mdash; no portal logins, no file uploads, no humans in the loop.</span></div>
+        <div class="row"><span class="tag earn">How the bank earns</span><span class="text">API usage fees plus the deepest stickiness possible &mdash; once developers build against your APIs, the company can't easily switch.</span></div>
+      </article>
+
+    </div>
+  </section>
+
+
+</main>
+
+<footer>
+  Vibe Coded by Xavier Ting
+</footer>
+
+<script>
+  // Mobile menu toggle
+  (function () {
+    var btn = document.getElementById('menuBtn');
+    var menu = document.getElementById('mobileMenu');
+    if (!btn || !menu) return;
+    btn.addEventListener('click', function () {
+      var open = menu.classList.toggle('open');
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    menu.addEventListener('click', function (e) {
+      if (e.target.tagName === 'A') {
+        menu.classList.remove('open');
+        btn.setAttribute('aria-expanded', 'false');
+      }
+    });
+  })();
+
+  // Reveal-on-scroll
+  (function () {
+    if (!('IntersectionObserver' in window)) {
+      document.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('is-visible'); });
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+    document.querySelectorAll('.reveal').forEach(function (el) { io.observe(el); });
+  })();
+
+  // Active section highlighting in nav
+  (function () {
+    if (!('IntersectionObserver' in window)) return;
+    var navLinks = document.querySelectorAll('.nav-list a[data-nav]');
+    if (!navLinks.length) return;
+    var byId = {};
+    navLinks.forEach(function (a) { byId[a.getAttribute('data-nav')] = a; });
+    var sections = Object.keys(byId).map(function (id) { return document.getElementById(id); }).filter(Boolean);
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        var id = entry.target.id;
+        var link = byId[id];
+        if (!link) return;
+        if (entry.isIntersecting) {
+          navLinks.forEach(function (a) { a.classList.remove('is-active'); });
+          link.classList.add('is-active');
+        }
+      });
+    }, { rootMargin: '-40% 0px -55% 0px', threshold: 0 });
+    sections.forEach(function (s) { io.observe(s); });
+  })();
+</script>
+</body>
+</html>

@@ -1,0 +1,2042 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Transaction Banking - Where the Money Flows &amp; Where the Bank Earns</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,600..800,50,1&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f5f1ea;
+    --ink: #1a1a1a;
+    --ink-soft: #59554e;
+    --muted: #81796d;
+    --paper: #fffaf2;
+    --paper-2: #ece5da;
+    --line: rgba(26, 26, 26, 0.16);
+    --line-soft: rgba(26, 26, 26, 0.09);
+    --cash: #3d6b6b;
+    --trade: #c85a4a;
+    --fxlane: #6b4a6b;
+    --fee: #c85a4a;
+    --nii: #526b35;
+    --fx: #7656a3;
+    --commission: #756d63;
+    --radius: 8px;
+    --shadow: 0 15px 45px rgba(65, 48, 31, 0.12), 0 2px 8px rgba(65, 48, 31, 0.08);
+    --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    color: var(--ink);
+    background:
+      radial-gradient(circle at 16% 12%, rgba(61, 107, 107, 0.10), transparent 28rem),
+      radial-gradient(circle at 88% 18%, rgba(200, 90, 74, 0.09), transparent 24rem),
+      linear-gradient(180deg, #f7f3ec 0%, var(--bg) 44%, #efe7dc 100%);
+    font-family: "IBM Plex Sans", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    letter-spacing: 0;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: geometricPrecision;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0.18;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.36'/%3E%3C/svg%3E");
+  }
+
+  button,
+  input {
+    font: inherit;
+  }
+
+  button {
+    color: inherit;
+  }
+
+  abbr[title] {
+    text-decoration: underline dotted rgba(26, 26, 26, 0.35);
+    text-underline-offset: 0.18em;
+    cursor: help;
+  }
+
+  .page {
+    min-height: 100vh;
+  }
+
+  .page-header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(330px, 460px);
+    gap: 2rem;
+    align-items: start;
+    max-width: 1540px;
+    margin: 0 auto;
+    padding: 34px 32px 20px;
+  }
+
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+    margin: 0 0 0.9rem;
+    color: var(--muted);
+    font-size: 0.74rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .eyebrow::before {
+    content: "";
+    width: 34px;
+    height: 1px;
+    background: currentColor;
+    opacity: 0.6;
+  }
+
+  h1 {
+    max-width: 980px;
+    margin: 0;
+    font-family: "Fraunces", Georgia, serif;
+    font-size: 3.25rem;
+    line-height: 1.04;
+    font-weight: 750;
+    letter-spacing: 0;
+  }
+
+  .subtitle {
+    max-width: 830px;
+    margin: 1rem 0 0;
+    color: var(--ink-soft);
+    font-size: 1.06rem;
+  }
+
+  .meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+    margin-top: 1.15rem;
+    color: var(--muted);
+    font-size: 0.84rem;
+  }
+
+  .meta-row span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+  }
+
+  .meta-row span + span::before {
+    content: "";
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: currentColor;
+    opacity: 0.55;
+  }
+
+  .control-panel {
+    justify-self: end;
+    width: 100%;
+    border: 1px solid rgba(26, 26, 26, 0.14);
+    background: rgba(255, 250, 242, 0.76);
+    backdrop-filter: blur(18px);
+    border-radius: var(--radius);
+    padding: 14px;
+    box-shadow: 0 10px 30px rgba(65, 48, 31, 0.08);
+  }
+
+  .control-grid {
+    display: grid;
+    gap: 0.85rem;
+  }
+
+  .control-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.55rem;
+  }
+
+  .control-label {
+    margin-right: 0.2rem;
+    color: var(--muted);
+    font-size: 0.73rem;
+    font-weight: 700;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+  }
+
+  .switch {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    min-height: 34px;
+    color: var(--ink-soft);
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .switch input,
+  .chip input {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .switch-ui {
+    position: relative;
+    width: 42px;
+    height: 24px;
+    border-radius: 999px;
+    background: #cfc6b8;
+    border: 1px solid rgba(26, 26, 26, 0.14);
+    transition: background 180ms var(--ease);
+  }
+
+  .switch-ui::after {
+    content: "";
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #fffaf2;
+    box-shadow: 0 1px 3px rgba(26, 26, 26, 0.22);
+    transition: transform 180ms var(--ease);
+  }
+
+  .switch input:checked + .switch-ui {
+    background: var(--cash);
+  }
+
+  .switch input:checked + .switch-ui::after {
+    transform: translateX(18px);
+  }
+
+  .segmented {
+    display: inline-grid;
+    grid-template-columns: 1fr 1fr;
+    padding: 3px;
+    border: 1px solid rgba(26, 26, 26, 0.14);
+    border-radius: var(--radius);
+    background: rgba(26, 26, 26, 0.05);
+  }
+
+  .segment {
+    min-height: 30px;
+    border: 0;
+    border-radius: 6px;
+    padding: 0 0.75rem;
+    background: transparent;
+    color: var(--ink-soft);
+    font-size: 0.84rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 180ms var(--ease), color 180ms var(--ease), box-shadow 180ms var(--ease);
+  }
+
+  .segment[aria-pressed="true"] {
+    background: var(--paper);
+    color: var(--ink);
+    box-shadow: 0 1px 5px rgba(26, 26, 26, 0.10);
+  }
+
+  .chip {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    min-height: 30px;
+    border: 1px solid rgba(26, 26, 26, 0.14);
+    border-radius: 999px;
+    padding: 0 0.7rem 0 0.55rem;
+    background: rgba(255, 250, 242, 0.75);
+    color: var(--ink-soft);
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+    user-select: none;
+    transition: transform 180ms var(--ease), background 180ms var(--ease), opacity 180ms var(--ease);
+  }
+
+  .chip::before {
+    content: "";
+    width: 9px;
+    height: 9px;
+    margin-right: 0.45rem;
+    border-radius: 50%;
+    background: var(--chip-color, var(--muted));
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--chip-color, var(--muted)) 18%, transparent);
+  }
+
+  .chip:has(input:not(:checked)) {
+    opacity: 0.46;
+    background: transparent;
+  }
+
+  .chip:focus-within,
+  .segment:focus-visible,
+  .lane-header:focus-visible,
+  .stage-card:focus-visible,
+  .revenue-marker:focus-visible {
+    outline: 3px solid rgba(118, 86, 163, 0.33);
+    outline-offset: 3px;
+  }
+
+  .journey-bar {
+    max-width: 1540px;
+    margin: 0 auto;
+    padding: 0 32px 18px;
+  }
+
+  .journey-inner {
+    display: grid;
+    grid-template-columns: 250px minmax(0, 1fr) 280px;
+    gap: 1rem;
+    align-items: stretch;
+  }
+
+  .journey-card,
+  .outcome-card {
+    border: 1px solid rgba(26, 26, 26, 0.14);
+    border-radius: var(--radius);
+    background: rgba(255, 250, 242, 0.70);
+    padding: 14px 15px;
+  }
+
+  .journey-card strong,
+  .outcome-card strong {
+    display: block;
+    margin-bottom: 0.25rem;
+    font-family: "Fraunces", Georgia, serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+  }
+
+  .journey-card span,
+  .outcome-card span {
+    color: var(--ink-soft);
+    font-size: 0.88rem;
+  }
+
+  .journey-track {
+    position: relative;
+    min-height: 84px;
+    border: 1px solid rgba(26, 26, 26, 0.12);
+    border-radius: var(--radius);
+    background: rgba(255, 250, 242, 0.48);
+  }
+
+  .journey-track::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 2px;
+    background: linear-gradient(90deg, var(--cash), var(--trade), var(--fxlane));
+    transform: translateY(-50%);
+  }
+
+  .journey-track::after {
+    content: "";
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    width: 10px;
+    height: 10px;
+    border-top: 2px solid var(--fxlane);
+    border-right: 2px solid var(--fxlane);
+    transform: translateY(-50%) rotate(45deg);
+  }
+
+  .journey-note {
+    position: absolute;
+    left: 24px;
+    top: 15px;
+    max-width: min(520px, calc(100% - 64px));
+    color: var(--ink-soft);
+    font-size: 0.86rem;
+    background: var(--bg);
+    border-radius: 4px;
+    padding-right: 0.6rem;
+  }
+
+  .map-section {
+    max-width: 1540px;
+    margin: 0 auto;
+    padding: 0 32px 24px;
+  }
+
+  .map-scroll {
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    border: 1px solid rgba(26, 26, 26, 0.16);
+    border-radius: var(--radius);
+    background: rgba(255, 250, 242, 0.58);
+    box-shadow: var(--shadow);
+  }
+
+  .map-canvas {
+    position: relative;
+    width: 100%;
+    min-width: 1660px;
+    aspect-ratio: 1660 / 920;
+    overflow: hidden;
+    isolation: isolate;
+  }
+
+  .map-canvas::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background:
+      linear-gradient(90deg, rgba(26, 26, 26, 0.05) 1px, transparent 1px),
+      linear-gradient(180deg, rgba(26, 26, 26, 0.035) 1px, transparent 1px);
+    background-size: 80px 80px;
+    opacity: 0.32;
+  }
+
+  .flow-svg {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+
+  .lane-band {
+    position: absolute;
+    z-index: 2;
+    border: 1px solid color-mix(in srgb, var(--lane-color) 24%, transparent);
+    border-left: 5px solid var(--lane-color);
+    border-radius: var(--radius);
+    background:
+      linear-gradient(90deg, color-mix(in srgb, var(--lane-color) 9%, transparent), transparent 36%),
+      rgba(255, 250, 242, 0.52);
+    animation: riseIn 460ms var(--ease) both;
+    animation-delay: var(--reveal-delay, 0ms);
+    transition: opacity 220ms var(--ease), transform 220ms var(--ease), background 220ms var(--ease);
+  }
+
+  .lane-band.is-expanded {
+    background:
+      linear-gradient(90deg, color-mix(in srgb, var(--lane-color) 15%, transparent), transparent 45%),
+      rgba(255, 250, 242, 0.70);
+  }
+
+  .lane-band.is-collapsed {
+    opacity: 0.54;
+  }
+
+  .lane-header {
+    position: absolute;
+    z-index: 5;
+    display: grid;
+    align-content: start;
+    gap: 0.45rem;
+    border: 1px solid color-mix(in srgb, var(--lane-color) 35%, rgba(26, 26, 26, 0.10));
+    border-radius: var(--radius);
+    background: rgba(255, 250, 242, 0.86);
+    padding: 13px;
+    overflow: hidden;
+    text-align: left;
+    cursor: pointer;
+    box-shadow: 0 5px 18px rgba(65, 48, 31, 0.08);
+    animation: riseIn 460ms var(--ease) both;
+    animation-delay: var(--reveal-delay, 0ms);
+    transition: transform 200ms var(--ease), box-shadow 200ms var(--ease), opacity 200ms var(--ease);
+  }
+
+  .lane-header:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(65, 48, 31, 0.12);
+  }
+
+  .lane-header.is-collapsed {
+    opacity: 0.48;
+  }
+
+  .lane-kicker {
+    color: var(--lane-color);
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+  }
+
+  .lane-title {
+    color: var(--ink);
+    font-family: "Fraunces", Georgia, serif;
+    font-size: 1rem;
+    font-weight: 750;
+    line-height: 1.12;
+    letter-spacing: 0;
+  }
+
+  .lane-summary-text {
+    color: var(--ink-soft);
+    font-size: 0.76rem;
+  }
+
+  .lane-summary {
+    position: absolute;
+    z-index: 4;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    border: 1px solid color-mix(in srgb, var(--lane-color) 26%, transparent);
+    border-radius: var(--radius);
+    background: rgba(255, 250, 242, 0.92);
+    padding: 10px 16px;
+    color: var(--ink-soft);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(8px);
+    transition: opacity 200ms var(--ease), transform 200ms var(--ease);
+  }
+
+  .lane-summary.is-visible {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+
+  .lane-summary strong {
+    color: var(--lane-color);
+    font-size: 0.82rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .stage-card {
+    position: absolute;
+    z-index: 6;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    min-height: 128px;
+    border: 1px solid rgba(26, 26, 26, 0.14);
+    border-top: 4px solid var(--lane-color);
+    border-radius: var(--radius);
+    background: rgba(255, 250, 242, 0.94);
+    padding: 10px;
+    overflow: hidden;
+    box-shadow: 0 5px 16px rgba(65, 48, 31, 0.08);
+    animation: riseIn 460ms var(--ease) both;
+    animation-delay: var(--reveal-delay, 0ms);
+    transition: opacity 200ms var(--ease), transform 200ms var(--ease), box-shadow 200ms var(--ease), border-color 200ms var(--ease), filter 200ms var(--ease);
+  }
+
+  .stage-card:hover,
+  .stage-card.is-active {
+    transform: translateY(-3px);
+    border-color: color-mix(in srgb, var(--lane-color) 60%, rgba(26, 26, 26, 0.12));
+    box-shadow: 0 12px 28px rgba(65, 48, 31, 0.16);
+  }
+
+  .stage-card.is-muted {
+    opacity: 0.25;
+    filter: saturate(0.65);
+  }
+
+  .stage-card.is-collapsed {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(8px);
+  }
+
+  .stage-title {
+    display: block;
+    color: var(--ink);
+    font-size: 0.9rem;
+    font-weight: 800;
+    line-height: 1.16;
+    overflow-wrap: anywhere;
+  }
+
+  .stage-desc {
+    margin: 0.45rem 0 0;
+    color: var(--ink-soft);
+    font-size: 0.72rem;
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+  }
+
+  .stage-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.6rem;
+    margin-top: 0.45rem;
+    color: var(--muted);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    overflow-wrap: anywhere;
+  }
+
+  .stage-foot::after {
+    content: "";
+    flex: 1;
+    max-width: 38px;
+    height: 1px;
+    background: color-mix(in srgb, var(--lane-color) 55%, transparent);
+  }
+
+  .revenue-marker {
+    position: absolute;
+    z-index: 9;
+    display: inline-grid;
+    place-items: center;
+    width: 31px;
+    height: 31px;
+    border: 2px solid #fffaf2;
+    border-radius: 50%;
+    background: var(--rev-color);
+    color: #fffaf2;
+    font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.95rem;
+    font-weight: 700;
+    line-height: 1;
+    cursor: pointer;
+    box-shadow: 0 8px 18px color-mix(in srgb, var(--rev-color) 28%, transparent), 0 0 0 1px rgba(26, 26, 26, 0.11);
+    transform: translate(-50%, -50%);
+    animation: markerIn 420ms var(--ease) both;
+    animation-delay: var(--reveal-delay, 760ms);
+    transition: opacity 190ms var(--ease), transform 190ms var(--ease), box-shadow 190ms var(--ease), filter 190ms var(--ease);
+  }
+
+  .revenue-marker::after {
+    content: "";
+    position: absolute;
+    inset: -7px;
+    border-radius: inherit;
+    border: 1px solid color-mix(in srgb, var(--rev-color) 34%, transparent);
+    opacity: 0.55;
+  }
+
+  .revenue-marker:hover,
+  .revenue-marker:focus-visible,
+  .revenue-marker.is-active {
+    transform: translate(-50%, -50%) scale(1.16);
+    box-shadow: 0 12px 26px color-mix(in srgb, var(--rev-color) 34%, transparent), 0 0 0 5px color-mix(in srgb, var(--rev-color) 13%, transparent);
+  }
+
+  .revenue-marker.is-muted {
+    opacity: 0.25;
+    filter: saturate(0.65);
+  }
+
+  .revenue-marker.is-collapsed {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .revenue-marker.is-filtered,
+  .revenue-marker.is-hidden-by-toggle {
+    display: none;
+  }
+
+  .map-canvas.hide-revenue .revenue-marker {
+    display: none;
+  }
+
+  .flow-path {
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    opacity: 0.78;
+    transition: opacity 200ms var(--ease), stroke-width 200ms var(--ease), filter 200ms var(--ease);
+  }
+
+  .flow-path.is-muted,
+  .flow-path.lane-collapsed {
+    opacity: 0.22;
+  }
+
+  .flow-path.is-active {
+    opacity: 1;
+    filter: drop-shadow(0 0 8px rgba(26, 26, 26, 0.12));
+  }
+
+  .flow-label {
+    fill: rgba(26, 26, 26, 0.58);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    pointer-events: none;
+  }
+
+  .flow-label.is-muted {
+    opacity: 0.22;
+  }
+
+  .particle {
+    opacity: 0.82;
+    filter: drop-shadow(0 2px 4px rgba(26, 26, 26, 0.18));
+  }
+
+  .tooltip {
+    position: absolute;
+    z-index: 20;
+    width: min(310px, calc(100vw - 48px));
+    border: 1px solid rgba(26, 26, 26, 0.18);
+    border-radius: var(--radius);
+    background: #fffaf2;
+    padding: 13px 14px 14px;
+    box-shadow: 0 18px 45px rgba(65, 48, 31, 0.18), 0 2px 8px rgba(65, 48, 31, 0.12);
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(-50%, -100%) translateY(-14px);
+    transition: opacity 150ms var(--ease);
+  }
+
+  .tooltip.is-visible {
+    opacity: 1;
+  }
+
+  .tooltip::after {
+    content: "";
+    position: absolute;
+    left: var(--pointer-x, 50%);
+    bottom: -7px;
+    width: 12px;
+    height: 12px;
+    border-right: 1px solid rgba(26, 26, 26, 0.18);
+    border-bottom: 1px solid rgba(26, 26, 26, 0.18);
+    background: #fffaf2;
+    transform: translateX(-50%) rotate(45deg);
+  }
+
+  .tooltip.below {
+    transform: translate(-50%, 14px);
+  }
+
+  .tooltip.below::after {
+    top: -7px;
+    bottom: auto;
+    border: 0;
+    border-top: 1px solid rgba(26, 26, 26, 0.18);
+    border-left: 1px solid rgba(26, 26, 26, 0.18);
+  }
+
+  @keyframes riseIn {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes markerIn {
+    from {
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(0.55);
+    }
+    to {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+  }
+
+  .tooltip-title {
+    display: block;
+    margin-bottom: 0.35rem;
+    color: var(--ink);
+    font-size: 0.98rem;
+    font-weight: 800;
+  }
+
+  .tooltip-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin-bottom: 0.55rem;
+    color: var(--ink-soft);
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+  }
+
+  .tooltip-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--rev-color);
+  }
+
+  .tooltip p {
+    margin: 0;
+    color: var(--ink-soft);
+    font-size: 0.86rem;
+    line-height: 1.35;
+  }
+
+  .tooltip .magnitude {
+    display: inline-flex;
+    margin-top: 0.75rem;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--rev-color) 12%, transparent);
+    color: color-mix(in srgb, var(--rev-color) 85%, #1a1a1a);
+    padding: 0.25rem 0.55rem;
+    font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.72rem;
+    font-weight: 700;
+  }
+
+  .legend {
+    display: grid;
+    grid-template-columns: minmax(180px, 0.8fr) repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+    max-width: 1540px;
+    margin: 0 auto;
+    padding: 0 32px 34px;
+  }
+
+  .legend-panel {
+    border: 1px solid rgba(26, 26, 26, 0.14);
+    border-radius: var(--radius);
+    background: rgba(255, 250, 242, 0.70);
+    padding: 14px;
+  }
+
+  .legend-panel h2 {
+    margin: 0 0 0.65rem;
+    font-family: "Fraunces", Georgia, serif;
+    font-size: 1.05rem;
+    line-height: 1.1;
+    font-weight: 750;
+    letter-spacing: 0;
+  }
+
+  .legend-list {
+    display: grid;
+    gap: 0.48rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    color: var(--ink-soft);
+    font-size: 0.84rem;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+  }
+
+  .legend-line {
+    width: 40px;
+    height: 0;
+    border-top: 4px solid var(--cash);
+    border-radius: 999px;
+  }
+
+  .legend-line.dashed {
+    border-top-style: dashed;
+    border-top-color: var(--commission);
+  }
+
+  .legend-line.thin {
+    border-top-width: 2px;
+  }
+
+  .legend-line.thick {
+    border-top-width: 7px;
+  }
+
+  .legend-dot {
+    display: inline-grid;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+    flex: 0 0 22px;
+    border-radius: 50%;
+    background: var(--legend-color);
+    color: #fffaf2;
+    font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.72rem;
+    font-weight: 700;
+  }
+
+  .stacked-view {
+    display: none;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 20px 32px;
+  }
+
+  .stacked-lane {
+    margin-bottom: 1rem;
+    border: 1px solid rgba(26, 26, 26, 0.14);
+    border-left: 5px solid var(--lane-color);
+    border-radius: var(--radius);
+    background: rgba(255, 250, 242, 0.78);
+    padding: 14px;
+  }
+
+  .stacked-lane h2 {
+    margin: 0 0 0.75rem;
+    font-family: "Fraunces", Georgia, serif;
+    font-size: 1.22rem;
+    letter-spacing: 0;
+  }
+
+  .stacked-stage {
+    padding: 0.8rem 0;
+    border-top: 1px solid rgba(26, 26, 26, 0.11);
+  }
+
+  .stacked-stage strong {
+    display: block;
+    margin-bottom: 0.2rem;
+  }
+
+  .stacked-stage p {
+    margin: 0 0 0.6rem;
+    color: var(--ink-soft);
+    font-size: 0.9rem;
+  }
+
+  .mobile-revenue-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+  }
+
+  .mobile-revenue {
+    width: 100%;
+    border: 1px solid rgba(26, 26, 26, 0.12);
+    border-radius: var(--radius);
+    background: rgba(255, 255, 255, 0.34);
+  }
+
+  .mobile-revenue[hidden] {
+    display: none;
+  }
+
+  .mobile-revenue summary {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.55rem 0.65rem;
+    cursor: pointer;
+    color: var(--ink);
+    font-size: 0.86rem;
+    font-weight: 700;
+  }
+
+  .mobile-revenue summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .mobile-revenue summary::after {
+    content: "+";
+    margin-left: auto;
+    color: var(--muted);
+    font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+
+  .mobile-revenue[open] summary::after {
+    content: "-";
+  }
+
+  .mobile-revenue p {
+    margin: 0;
+    padding: 0 0.65rem 0.7rem 2.35rem;
+    color: var(--ink-soft);
+    font-size: 0.84rem;
+  }
+
+  .mobile-dollar {
+    display: inline-grid;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--rev-color);
+    color: #fffaf2;
+    font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.72rem;
+    font-weight: 700;
+  }
+
+  @media (max-width: 1180px) {
+    .page-header {
+      grid-template-columns: 1fr;
+    }
+
+    .control-panel {
+      justify-self: stretch;
+    }
+
+    h1 {
+      font-size: 2.65rem;
+    }
+
+    .legend {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 860px) {
+    .page-header,
+    .journey-bar,
+    .map-section,
+    .legend {
+      padding-left: 20px;
+      padding-right: 20px;
+    }
+
+    h1 {
+      font-size: 2.2rem;
+    }
+
+    .journey-inner {
+      grid-template-columns: 1fr;
+    }
+
+    .journey-track {
+      min-height: 58px;
+    }
+
+    .journey-note {
+      position: relative;
+      top: auto;
+      left: auto;
+      display: inline-block;
+      margin-top: 10px;
+      padding: 0 0.5rem 0 0;
+    }
+
+    .legend {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 767px) {
+    .map-section {
+      display: none;
+    }
+
+    .stacked-view {
+      display: block;
+    }
+
+    .page-header {
+      padding-top: 24px;
+    }
+
+    .control-row {
+      align-items: flex-start;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      scroll-behavior: auto !important;
+      transition-duration: 0.001ms !important;
+    }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">Transaction Banking Operating Map</p>
+      <h1>Transaction Banking &mdash; Where the Money Flows &amp; Where the Bank Earns</h1>
+      <p class="subtitle">A shared operating model for Cash Management + Payments, Trade Finance, and FX. Process is the canvas; revenue zones are the punctuation.</p>
+      <div class="meta-row" aria-label="Document metadata">
+        <span>Internal stakeholder artefact</span>
+        <span>Last updated 25 May 2026</span>
+      </div>
+    </div>
+
+    <section class="control-panel" aria-label="Diagram controls">
+      <div class="control-grid">
+        <div class="control-row">
+          <label class="switch">
+            <input id="toggleRevenue" type="checkbox" checked>
+            <span class="switch-ui" aria-hidden="true"></span>
+            <span>Revenue markers</span>
+          </label>
+        </div>
+        <div class="control-row" aria-label="Filter revenue type">
+          <span class="control-label">Revenue</span>
+          <label class="chip" style="--chip-color: var(--fee);"><input type="checkbox" name="revType" value="fee" checked>Fee</label>
+          <label class="chip" style="--chip-color: var(--nii);"><input type="checkbox" name="revType" value="nii" checked>NII</label>
+          <label class="chip" style="--chip-color: var(--fx);"><input type="checkbox" name="revType" value="fx" checked>FX</label>
+          <label class="chip" style="--chip-color: var(--commission);"><input type="checkbox" name="revType" value="commission" checked>Commission</label>
+        </div>
+      </div>
+    </section>
+  </header>
+
+  <section class="journey-bar" aria-label="Client journey overlay">
+    <div class="journey-inner">
+      <div class="journey-card">
+        <strong>Corporate client</strong>
+        <span>Importer, exporter, or MNC moving working capital through accounts, trade flows, payments, and hedges.</span>
+      </div>
+      <div class="journey-track">
+        <p class="journey-note">The same client journey cuts across all three lanes: cash is collected, liquidity is positioned, trade is financed, currency is converted or hedged, and settlement closes the loop.</p>
+      </div>
+      <div class="outcome-card">
+        <strong>Business outcome</strong>
+        <span>Working capital optimised, risk hedged, payments executed, and information reconciled.</span>
+      </div>
+    </div>
+  </section>
+
+  <main>
+    <section class="map-section" aria-label="Interactive transaction banking operating map">
+      <div class="map-scroll">
+        <div class="map-canvas" id="mapCanvas">
+          <svg class="flow-svg" id="flowSvg" viewBox="0 0 1660 920" aria-hidden="true" focusable="false">
+            <defs>
+              <marker id="arrow-cash" markerWidth="12" markerHeight="10" refX="10" refY="5" orient="auto" markerUnits="strokeWidth">
+                <path d="M0 0L12 5L0 10Z" fill="#3d6b6b"></path>
+              </marker>
+              <marker id="arrow-trade" markerWidth="12" markerHeight="10" refX="10" refY="5" orient="auto" markerUnits="strokeWidth">
+                <path d="M0 0L12 5L0 10Z" fill="#c85a4a"></path>
+              </marker>
+              <marker id="arrow-fx" markerWidth="12" markerHeight="10" refX="10" refY="5" orient="auto" markerUnits="strokeWidth">
+                <path d="M0 0L12 5L0 10Z" fill="#6b4a6b"></path>
+              </marker>
+              <marker id="arrow-stone" markerWidth="12" markerHeight="10" refX="10" refY="5" orient="auto" markerUnits="strokeWidth">
+                <path d="M0 0L12 5L0 10Z" fill="#756d63"></path>
+              </marker>
+            </defs>
+            <g id="flowLayer"></g>
+            <g id="particleLayer"></g>
+            <g id="labelLayer"></g>
+          </svg>
+          <div id="laneLayer"></div>
+          <div id="nodeLayer"></div>
+          <div id="markerLayer"></div>
+          <div class="tooltip" id="tooltip" role="tooltip" aria-hidden="true"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="stacked-view" id="stackedView" aria-label="Stacked transaction banking operating map"></section>
+
+    <section class="legend" aria-label="Map legend">
+      <div class="legend-panel">
+        <h2>Line logic</h2>
+        <ul class="legend-list">
+          <li class="legend-item"><span class="legend-line"></span>Solid line: client money movement</li>
+          <li class="legend-item"><span class="legend-line dashed"></span>Dashed line: bank funding, hedging, or risk position</li>
+          <li class="legend-item"><span class="legend-line thin"></span>Thin: lower relative flow</li>
+          <li class="legend-item"><span class="legend-line thick"></span>Thick: higher relative flow</li>
+        </ul>
+      </div>
+      <div class="legend-panel">
+        <h2>Revenue types</h2>
+        <ul class="legend-list">
+          <li class="legend-item"><span class="legend-dot" style="--legend-color: var(--fee);">$</span>Fee income - setup, transaction, subscription, advisory</li>
+          <li class="legend-item"><span class="legend-dot" style="--legend-color: var(--nii);">$</span>NII - deposit spread, float, financing margin</li>
+          <li class="legend-item"><span class="legend-dot" style="--legend-color: var(--fx);">$</span>FX spread - bid-ask, forward points, swap margin</li>
+          <li class="legend-item"><span class="legend-dot" style="--legend-color: var(--commission);">$</span>Risk / commission - guarantees, standby LCs, LC confirmations, risk participation</li>
+        </ul>
+      </div>
+      <div class="legend-panel">
+        <h2>Lane colours</h2>
+        <ul class="legend-list">
+          <li class="legend-item"><span class="legend-dot" style="--legend-color: var(--cash);"></span>Cash Management &amp; Payments</li>
+          <li class="legend-item"><span class="legend-dot" style="--legend-color: var(--trade);"></span>Trade Finance</li>
+          <li class="legend-item"><span class="legend-dot" style="--legend-color: var(--fxlane);"></span>FX</li>
+        </ul>
+      </div>
+      <div class="legend-panel">
+        <h2>Reading the map</h2>
+        <ul class="legend-list">
+          <li>Revenue markers sit exactly where value is captured.</li>
+          <li>Money flows left to right from client need to business outcome.</li>
+          <li>Cross-lane paths show when payments, trade, and FX reinforce each other.</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+(() => {
+  const VIEW_W = 1660;
+  const VIEW_H = 920;
+  const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  const revenueMeta = {
+    fee: { label: "Fee income", color: "#c85a4a" },
+    nii: { label: "Net Interest Income", color: "#526b35" },
+    fx: { label: "FX spread", color: "#7656a3" },
+    commission: { label: "Risk / commission", color: "#756d63" }
+  };
+
+  const lanes = [
+    {
+      id: "cash",
+      letter: "Lane A",
+      title: "Cash Management & Payments",
+      summary: "Accounts, collections, liquidity, payments, and reporting",
+      color: "#3d6b6b",
+      band: { x: 270, y: 96, w: 1114, h: 230 },
+      header: { x: 46, y: 122, w: 190, h: 154 },
+      strip: { x: 300, y: 174, w: 1025, h: 52 }
+    },
+    {
+      id: "trade",
+      letter: "Lane B",
+      title: "Trade Finance",
+      summary: "Trade instruments, financing, settlement, and risk mitigation",
+      color: "#c85a4a",
+      band: { x: 270, y: 336, w: 1114, h: 230 },
+      header: { x: 46, y: 362, w: 190, h: 154 },
+      strip: { x: 300, y: 414, w: 1025, h: 52 }
+    },
+    {
+      id: "fx",
+      letter: "Lane C",
+      title: "FX",
+      summary: "Pricing, execution, settlement, and position management",
+      color: "#6b4a6b",
+      band: { x: 270, y: 576, w: 1114, h: 230 },
+      header: { x: 46, y: 602, w: 190, h: 154 },
+      strip: { x: 300, y: 654, w: 1025, h: 52 }
+    }
+  ];
+
+  const nodes = [
+    {
+      id: "cash-account",
+      lane: "cash",
+      x: 300,
+      y: 148,
+      w: 175,
+      h: 132,
+      title: "Account opening",
+      body: "Controlled operating accounts are created and maintained for client cash.",
+      foot: "cash starts"
+    },
+    {
+      id: "cash-collections",
+      lane: "cash",
+      x: 510,
+      y: 148,
+      w: 175,
+      h: 132,
+      title: "Collections incoming",
+      body: "Customer money arrives through <abbr title='Unique account numbers that identify who paid and why'>virtual accounts</abbr>, cards, direct debit, or <abbr title='A bank service that receives and processes customer payments'>lockbox</abbr>.",
+      foot: "money in"
+    },
+    {
+      id: "cash-liquidity",
+      lane: "cash",
+      x: 720,
+      y: 148,
+      w: 175,
+      h: 132,
+      title: "Liquidity pooling",
+      body: "Balances are swept or pooled so surplus cash in one account covers shortfalls in another.",
+      foot: "cash positioned"
+    },
+    {
+      id: "cash-payments",
+      lane: "cash",
+      x: 930,
+      y: 148,
+      w: 175,
+      h: 132,
+      title: "Payments outgoing",
+      body: "Supplier, payroll, tax, and cross-border payments leave through bank rails.",
+      foot: "money out"
+    },
+    {
+      id: "cash-recon",
+      lane: "cash",
+      x: 1140,
+      y: 148,
+      w: 175,
+      h: 132,
+      title: "Reconciliation & reporting",
+      body: "Files, <abbr title='Application programming interface: a system-to-system connection'>APIs</abbr>, and dashboards match payments to invoices and ledgers.",
+      foot: "control loop"
+    },
+    {
+      id: "trade-origination",
+      lane: "trade",
+      x: 300,
+      y: 388,
+      w: 175,
+      h: 132,
+      title: "Trade origination",
+      body: "Buyer, seller, shipment, tenor, and document needs are captured.",
+      foot: "trade need"
+    },
+    {
+      id: "trade-instruments",
+      lane: "trade",
+      x: 510,
+      y: 388,
+      w: 175,
+      h: 132,
+      title: "Documentary instruments",
+      body: "<abbr title='Letter of credit: a bank undertaking to pay when documents comply'>LCs</abbr>, <abbr title='Documentary collection: bank handles shipping documents against payment or acceptance'>collections</abbr>, guarantees, and standby LCs manage payment and performance risk.",
+      foot: "documents"
+    },
+    {
+      id: "trade-financing",
+      lane: "trade",
+      x: 720,
+      y: 388,
+      w: 185,
+      h: 132,
+      title: "Financing",
+      body: "Invoices, payables, receivables, and shipment advances fund working capital.",
+      foot: "credit deployed"
+    },
+    {
+      id: "trade-settlement",
+      lane: "trade",
+      x: 940,
+      y: 388,
+      w: 175,
+      h: 132,
+      title: "Settlement",
+      body: "Documents, obligations, loan proceeds, and currency legs settle.",
+      foot: "cash closes"
+    },
+    {
+      id: "trade-risk",
+      lane: "trade",
+      x: 1150,
+      y: 388,
+      w: 175,
+      h: 132,
+      title: "Risk mitigation",
+      body: "Guarantees, confirmations, insurance, and risk participation manage exposure.",
+      foot: "risk held"
+    },
+    {
+      id: "fx-quote",
+      lane: "fx",
+      x: 300,
+      y: 628,
+      w: 175,
+      h: 132,
+      title: "Quote request",
+      body: "Client requests a conversion or hedge tied to payment, trade, or treasury.",
+      foot: "need priced"
+    },
+    {
+      id: "fx-pricing",
+      lane: "fx",
+      x: 510,
+      y: 628,
+      w: 175,
+      h: 132,
+      title: "Pricing & hedging",
+      body: "Sales and trading price spot, forwards, swaps, and structured hedges for the client.",
+      foot: "spread set"
+    },
+    {
+      id: "fx-execution",
+      lane: "fx",
+      x: 720,
+      y: 628,
+      w: 185,
+      h: 132,
+      title: "Execution",
+      body: "Spot, forward, or swap is booked and linked to payment or trade settlement.",
+      foot: "trade booked"
+    },
+    {
+      id: "fx-settlement",
+      lane: "fx",
+      x: 940,
+      y: 628,
+      w: 175,
+      h: 132,
+      title: "Settlement",
+      body: "<abbr title='Continuous Linked Settlement: a service that reduces FX settlement risk'>CLS</abbr> or correspondent accounts exchange the two currency legs.",
+      foot: "currency moves"
+    },
+    {
+      id: "fx-position",
+      lane: "fx",
+      x: 1150,
+      y: 628,
+      w: 175,
+      h: 132,
+      title: "Position management",
+      body: "The bank hedges, funds, and monitors open currency positions.",
+      foot: "risk managed"
+    }
+  ];
+
+  const flowLines = [
+    { id: "cash-in-0", lane: "cash", kind: "solid", color: "#3d6b6b", width: 4, d: "M246 204H300", related: ["cash-account"] },
+    { id: "cash-in-1", lane: "cash", kind: "solid", color: "#3d6b6b", width: 5, d: "M475 204H510", related: ["cash-account", "cash-collections", "rev-account-maintenance", "rev-collections-fee"] },
+    { id: "cash-in-2", lane: "cash", kind: "solid", color: "#3d6b6b", width: 9, d: "M685 204H720", related: ["cash-collections", "cash-liquidity", "rev-collections-fee", "rev-collections-float", "rev-liquidity-fee", "rev-liquidity-nii"] },
+    { id: "cash-out-1", lane: "cash", kind: "solid", color: "#3d6b6b", width: 8, d: "M895 204H930", related: ["cash-liquidity", "cash-payments", "rev-liquidity-nii", "rev-payments-fee"] },
+    { id: "cash-out-2", lane: "cash", kind: "solid", color: "#3d6b6b", width: 7, d: "M1105 204H1140", related: ["cash-payments", "cash-recon", "rev-payments-fee", "rev-payments-fx", "rev-recon-fee"] },
+    { id: "cash-out-3", lane: "cash", kind: "solid", color: "#3d6b6b", width: 4, d: "M1315 204H1428", related: ["cash-recon"] },
+
+    { id: "trade-0", lane: "trade", kind: "solid", color: "#c85a4a", width: 4, d: "M246 444H300", related: ["trade-origination"] },
+    { id: "trade-1", lane: "trade", kind: "solid", color: "#c85a4a", width: 5, d: "M475 444H510", related: ["trade-origination", "trade-instruments", "rev-lc-issuance"] },
+    { id: "trade-2", lane: "trade", kind: "solid", color: "#c85a4a", width: 6, d: "M685 444H720", related: ["trade-instruments", "trade-financing", "rev-lc-advising", "rev-confirmation", "rev-doc-collection", "rev-guarantee", "rev-invoice-finance"] },
+    { id: "trade-3", lane: "trade", kind: "solid", color: "#c85a4a", width: 7, d: "M905 444H940", related: ["trade-financing", "trade-settlement", "rev-invoice-finance", "rev-scf-margin", "rev-preshipment"] },
+    { id: "trade-4", lane: "trade", kind: "solid", color: "#c85a4a", width: 5, d: "M1115 444H1150", related: ["trade-settlement", "trade-risk", "rev-guarantee"] },
+    { id: "trade-5", lane: "trade", kind: "solid", color: "#c85a4a", width: 4, d: "M1325 444H1428", related: ["trade-risk"] },
+
+    { id: "fx-0", lane: "fx", kind: "solid", color: "#6b4a6b", width: 4, d: "M246 684H300", related: ["fx-quote"] },
+    { id: "fx-1", lane: "fx", kind: "solid", color: "#6b4a6b", width: 5, d: "M475 684H510", related: ["fx-quote", "fx-pricing", "rev-hedging-advisory", "rev-forward"] },
+    { id: "fx-2", lane: "fx", kind: "solid", color: "#6b4a6b", width: 8, d: "M685 684H720", related: ["fx-pricing", "fx-execution", "rev-spot", "rev-forward", "rev-swap"] },
+    { id: "fx-3", lane: "fx", kind: "solid", color: "#6b4a6b", width: 8, d: "M905 684H940", related: ["fx-execution", "fx-settlement", "rev-spot", "rev-forward", "rev-swap"] },
+    { id: "fx-4", lane: "fx", kind: "solid", color: "#6b4a6b", width: 5, d: "M1115 684H1150", related: ["fx-settlement", "fx-position"] },
+    { id: "fx-5", lane: "fx", kind: "solid", color: "#6b4a6b", width: 4, d: "M1325 684H1428", related: ["fx-position"] },
+
+    { id: "x-payment-fx", lane: "cash fx", kind: "solid", color: "#6b4a6b", width: 4, d: "M1018 260C1056 388 980 522 820 628", related: ["cash-payments", "fx-execution", "rev-payments-fx", "rev-spot"] },
+    { id: "x-trade-payment", lane: "trade cash", kind: "solid", color: "#c85a4a", width: 3.5, d: "M1028 388C1084 332 1084 290 1018 260", related: ["trade-settlement", "cash-payments", "rev-payments-fee"] },
+    { id: "x-trade-fx", lane: "trade fx", kind: "solid", color: "#6b4a6b", width: 3.5, d: "M1028 500C1088 560 1130 600 1028 628", related: ["trade-settlement", "fx-settlement", "rev-spot", "rev-forward"] },
+
+    { id: "internal-funding", lane: "cash trade", kind: "dashed", color: "#756d63", width: 3, d: "M808 260C830 318 792 348 812 388", related: ["cash-liquidity", "trade-financing", "rev-liquidity-nii", "rev-invoice-finance", "rev-scf-margin", "rev-preshipment"], label: { x: 832, y: 334, text: "internal funding" } },
+    { id: "internal-risk", lane: "trade", kind: "dashed", color: "#756d63", width: 3, d: "M1238 510C1348 542 1340 370 1242 388", related: ["trade-risk", "trade-instruments", "rev-guarantee", "rev-confirmation"], label: { x: 1262, y: 558, text: "risk book" } },
+    { id: "internal-fx-hedge", lane: "fx", kind: "dashed", color: "#756d63", width: 3, d: "M610 760C720 850 1114 850 1238 760", related: ["fx-pricing", "fx-position", "rev-forward", "rev-swap", "rev-hedging-advisory"], label: { x: 800, y: 862, text: "hedging and position book" } }
+  ];
+
+  const revenues = [
+    {
+      id: "rev-account-maintenance",
+      lane: "cash",
+      node: "cash-account",
+      type: "fee",
+      x: 455,
+      y: 142,
+      title: "Account opening & maintenance",
+      mechanism: "Bank earns setup, account maintenance, and service fees for operating account infrastructure.",
+      magnitude: "low-mid contribution"
+    },
+    {
+      id: "rev-collections-fee",
+      lane: "cash",
+      node: "cash-collections",
+      type: "fee",
+      x: 640,
+      y: 142,
+      title: "Incoming collections fee",
+      mechanism: "Bank earns per-transaction or service fees on virtual account, lockbox, card, or direct debit collections.",
+      magnitude: "high combined contribution"
+    },
+    {
+      id: "rev-collections-float",
+      lane: "cash",
+      node: "cash-collections",
+      type: "nii",
+      x: 675,
+      y: 172,
+      title: "Collections float",
+      mechanism: "Bank earns deposit spread while collected funds sit before they are swept, paid out, or invested.",
+      magnitude: "high combined contribution"
+    },
+    {
+      id: "rev-liquidity-fee",
+      lane: "cash",
+      node: "cash-liquidity",
+      type: "fee",
+      x: 850,
+      y: 142,
+      title: "Liquidity pooling / sweeping fee",
+      mechanism: "Bank earns structure, account, and transfer fees for pooling, sweeping, or target balancing.",
+      magnitude: "mid contribution"
+    },
+    {
+      id: "rev-liquidity-nii",
+      lane: "cash",
+      node: "cash-liquidity",
+      type: "nii",
+      x: 885,
+      y: 172,
+      title: "Liquidity spread on positions",
+      mechanism: "Bank earns deposit or funding spread on pooled balances and intercompany positions over time.",
+      magnitude: "mid contribution"
+    },
+    {
+      id: "rev-payments-fee",
+      lane: "cash",
+      node: "cash-payments",
+      type: "fee",
+      x: 1060,
+      y: 142,
+      title: "Outgoing payment transaction fee",
+      mechanism: "Bank earns a fee per domestic or cross-border payment, often tiered by rail, file, and service level.",
+      magnitude: "high contribution"
+    },
+    {
+      id: "rev-payments-fx",
+      lane: "cash",
+      node: "cash-payments",
+      type: "fx",
+      x: 1095,
+      y: 172,
+      title: "Cross-currency payment FX spread",
+      mechanism: "Bank earns bid-ask spread when an outgoing payment requires currency conversion.",
+      magnitude: "high contribution"
+    },
+    {
+      id: "rev-recon-fee",
+      lane: "cash",
+      node: "cash-recon",
+      type: "fee",
+      x: 1276,
+      y: 142,
+      title: "Reconciliation & reporting fee",
+      mechanism: "Bank earns subscription or value-add fees for host-to-host files, APIs, and enriched reporting.",
+      magnitude: "low-mid contribution"
+    },
+    {
+      id: "rev-lc-issuance",
+      lane: "trade",
+      node: "trade-instruments",
+      type: "fee",
+      x: 560,
+      y: 382,
+      title: "LC issuance",
+      mechanism: "Bank earns an issuance fee for creating a letter of credit and taking document compliance obligations.",
+      magnitude: "mid contribution"
+    },
+    {
+      id: "rev-lc-advising",
+      lane: "trade",
+      node: "trade-instruments",
+      type: "fee",
+      x: 598,
+      y: 382,
+      title: "LC advising",
+      mechanism: "Bank earns an advising fee for authenticating and communicating the letter of credit to the beneficiary.",
+      magnitude: "mid contribution"
+    },
+    {
+      id: "rev-confirmation",
+      lane: "trade",
+      node: "trade-instruments",
+      type: "commission",
+      x: 636,
+      y: 382,
+      title: "LC confirmation commission",
+      mechanism: "Bank earns confirmation commission for adding its own payment undertaking and taking bank or country risk.",
+      magnitude: "mid contribution"
+    },
+    {
+      id: "rev-doc-collection",
+      lane: "trade",
+      node: "trade-instruments",
+      type: "fee",
+      x: 674,
+      y: 382,
+      title: "Documentary collection handling",
+      mechanism: "Bank earns handling fees for processing shipping documents against payment or acceptance.",
+      magnitude: "low contribution"
+    },
+    {
+      id: "rev-guarantee",
+      lane: "trade",
+      node: "trade-risk",
+      type: "commission",
+      x: 1286,
+      y: 382,
+      title: "Bank guarantees / standby LCs",
+      mechanism: "Bank earns commission as a percentage per annum on the guarantee or standby LC exposure.",
+      magnitude: "high contribution"
+    },
+    {
+      id: "rev-invoice-finance",
+      lane: "trade",
+      node: "trade-financing",
+      type: "nii",
+      x: 850,
+      y: 382,
+      title: "Invoice / receivables financing",
+      mechanism: "Bank earns discount margin or lending spread while advancing cash against receivables.",
+      magnitude: "high contribution"
+    },
+    {
+      id: "rev-scf-margin",
+      lane: "trade",
+      node: "trade-financing",
+      type: "nii",
+      x: 884,
+      y: 412,
+      title: "Supply chain finance margin",
+      mechanism: "Bank earns a supplier discount margin, often supported by the anchor buyer relationship.",
+      magnitude: "mid-high contribution"
+    },
+    {
+      id: "rev-scf-fee",
+      lane: "trade",
+      node: "trade-financing",
+      type: "fee",
+      x: 812,
+      y: 412,
+      title: "Supply chain finance programme fee",
+      mechanism: "Bank earns programme, platform, or onboarding fees for running the payables finance structure.",
+      magnitude: "mid-high contribution"
+    },
+    {
+      id: "rev-preshipment",
+      lane: "trade",
+      node: "trade-financing",
+      type: "nii",
+      x: 848,
+      y: 448,
+      title: "Pre / post-shipment financing",
+      mechanism: "Bank earns lending spread on advances before shipment or after shipment until buyer payment arrives.",
+      magnitude: "mid contribution"
+    },
+    {
+      id: "rev-spot",
+      lane: "fx",
+      node: "fx-execution",
+      type: "fx",
+      x: 850,
+      y: 622,
+      title: "Spot conversion",
+      mechanism: "Bank earns bid-ask spread when currency is converted, including FX embedded in a payment.",
+      magnitude: "very high contribution"
+    },
+    {
+      id: "rev-forward",
+      lane: "fx",
+      node: "fx-pricing",
+      type: "fx",
+      x: 640,
+      y: 622,
+      title: "Forward contract",
+      mechanism: "Bank earns spread in the forward points and all-in forward rate for a future-dated conversion.",
+      magnitude: "mid-high contribution"
+    },
+    {
+      id: "rev-swap",
+      lane: "fx",
+      node: "fx-pricing",
+      type: "fx",
+      x: 675,
+      y: 652,
+      title: "FX swap",
+      mechanism: "Bank earns swap margin when exchanging currencies now and reversing them at a later date.",
+      magnitude: "mid contribution"
+    },
+    {
+      id: "rev-hedging-advisory",
+      lane: "fx",
+      node: "fx-quote",
+      type: "fee",
+      x: 455,
+      y: 622,
+      title: "Hedging advisory",
+      mechanism: "Bank earns an advisory or structuring fee for designing hedge solutions tied to client risk; the spread on any executed forward, swap, or option is captured separately.",
+      magnitude: "mid contribution"
+    }
+  ];
+
+  const mapCanvas = document.getElementById("mapCanvas");
+  const laneLayer = document.getElementById("laneLayer");
+  const nodeLayer = document.getElementById("nodeLayer");
+  const markerLayer = document.getElementById("markerLayer");
+  const flowLayer = document.getElementById("flowLayer");
+  const particleLayer = document.getElementById("particleLayer");
+  const labelLayer = document.getElementById("labelLayer");
+  const tooltip = document.getElementById("tooltip");
+  const stackedView = document.getElementById("stackedView");
+
+  let expandedLane = null;
+  let activeTypes = new Set(Object.keys(revenueMeta));
+  let revenueVisible = true;
+
+  function pctX(x) {
+    return `${(x / VIEW_W) * 100}%`;
+  }
+
+  function pctY(y) {
+    return `${(y / VIEW_H) * 100}%`;
+  }
+
+  function setBox(el, box) {
+    el.style.left = pctX(box.x);
+    el.style.top = pctY(box.y);
+    el.style.width = pctX(box.w);
+    el.style.height = pctY(box.h);
+  }
+
+  function escapeHtml(value) {
+    return String(value)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
+  function createSvg(tag, attrs = {}) {
+    const el = document.createElementNS("http://www.w3.org/2000/svg", tag);
+    Object.entries(attrs).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) el.setAttribute(key, value);
+    });
+    return el;
+  }
+
+  function renderLanes() {
+    lanes.forEach((lane) => {
+      const band = document.createElement("div");
+      band.className = "lane-band";
+      band.dataset.lane = lane.id;
+      band.style.setProperty("--lane-color", lane.color);
+      band.style.setProperty("--reveal-delay", `${lanes.indexOf(lane) * 150}ms`);
+      setBox(band, lane.band);
+      laneLayer.appendChild(band);
+
+      const header = document.createElement("button");
+      header.type = "button";
+      header.className = "lane-header";
+      header.dataset.lane = lane.id;
+      header.style.setProperty("--lane-color", lane.color);
+      header.style.setProperty("--reveal-delay", `${lanes.indexOf(lane) * 150}ms`);
+      header.setAttribute("aria-expanded", "false");
+      header.setAttribute("aria-label", `${lane.title}. Click to expand this lane.`);
+      setBox(header, lane.header);
+      header.innerHTML = `
+        <span class="lane-kicker">${escapeHtml(lane.letter)}</span>
+        <span class="lane-title">${escapeHtml(lane.title)}</span>
+        <span class="lane-summary-text">${escapeHtml(lane.summary)}</span>
+      `;
+      header.addEventListener("click", () => {
+        expandedLane = expandedLane === lane.id ? null : lane.id;
+        updateLaneExpansion();
+      });
+      laneLayer.appendChild(header);
+
+      const strip = document.createElement("div");
+      strip.className = "lane-summary";
+      strip.dataset.lane = lane.id;
+      strip.style.setProperty("--lane-color", lane.color);
+      setBox(strip, lane.strip);
+      const laneRevenueCount = revenues.filter((rev) => rev.lane === lane.id).length;
+      strip.innerHTML = `<strong>${escapeHtml(lane.title)}</strong><span>${lane.summary} · ${laneRevenueCount} revenue zones</span>`;
+      laneLayer.appendChild(strip);
+    });
+  }
+
+  function renderNodes() {
+    nodes.forEach((node) => {
+      const lane = lanes.find((item) => item.id === node.lane);
+      const laneIndex = lanes.findIndex((item) => item.id === node.lane);
+      const card = document.createElement("article");
+      card.className = "stage-card";
+      card.dataset.node = node.id;
+      card.dataset.lane = node.lane;
+      card.style.setProperty("--lane-color", lane.color);
+      card.style.setProperty("--reveal-delay", `${laneIndex * 150 + 90}ms`);
+      setBox(card, node);
+      card.tabIndex = 0;
+      card.setAttribute("role", "group");
+      card.setAttribute("aria-label", `${lane.title}: ${node.title}. Focus to highlight related money flows and revenue zones.`);
+      card.innerHTML = `
+        <strong class="stage-title">${escapeHtml(node.title)}</strong>
+        <p class="stage-desc">${node.body}</p>
+        <span class="stage-foot">${escapeHtml(node.foot)}</span>
+      `;
+      card.addEventListener("mouseenter", () => focusRelated(node.id));
+      card.addEventListener("mouseleave", clearFocus);
+      card.addEventListener("focus", () => focusRelated(node.id));
+      card.addEventListener("blur", clearFocus);
+      nodeLayer.appendChild(card);
+    });
+  }
+
+  function renderFlows() {
+    flowLines.forEach((line, index) => {
+      const path = createSvg("path", {
+        id: line.id,
+        class: "flow-path",
+        d: line.d,
+        stroke: line.color,
+        "stroke-width": line.width,
+        "stroke-dasharray": line.kind === "dashed" ? "10 12" : null,
+        "marker-end": line.id.endsWith("-3") || line.id.endsWith("-5") ? `url(#arrow-${line.lane.includes("cash") && !line.lane.includes("fx") ? "cash" : line.lane.includes("trade") && !line.lane.includes("fx") ? "trade" : line.lane.includes("fx") ? "fx" : "stone"})` : null
+      });
+      path.dataset.related = line.related.join(" ");
+      path.dataset.lane = line.lane;
+      flowLayer.appendChild(path);
+
+      if (!prefersReducedMotion && line.kind === "solid" && index % 2 === 0) {
+        const particle = createSvg("circle", {
+          class: "particle",
+          r: line.width >= 8 ? 4.5 : 3.5,
+          fill: line.color
+        });
+        const animate = createSvg("animateMotion", {
+          dur: `${8 + (index % 5)}s`,
+          begin: `${1.1 + (index % 4) * 0.7}s`,
+          repeatCount: "indefinite",
+          rotate: "auto"
+        });
+        const mpath = createSvg("mpath", { href: `#${line.id}` });
+        animate.appendChild(mpath);
+        particle.appendChild(animate);
+        particleLayer.appendChild(particle);
+      }
+
+      if (line.label) {
+        const label = createSvg("text", {
+          class: "flow-label",
+          x: line.label.x,
+          y: line.label.y
+        });
+        label.dataset.related = line.related.join(" ");
+        label.textContent = line.label.text;
+        labelLayer.appendChild(label);
+      }
+    });
+  }
+
+  function renderMarkers() {
+    revenues.forEach((rev) => {
+      const marker = document.createElement("button");
+      marker.type = "button";
+      marker.className = "revenue-marker";
+      marker.dataset.revenue = rev.id;
+      marker.dataset.node = rev.node;
+      marker.dataset.type = rev.type;
+      marker.dataset.lane = rev.lane;
+      marker.style.left = pctX(rev.x);
+      marker.style.top = pctY(rev.y);
+      marker.style.setProperty("--rev-color", revenueMeta[rev.type].color);
+      marker.style.setProperty("--reveal-delay", `${760 + revenues.indexOf(rev) * 24}ms`);
+      marker.setAttribute("aria-label", `${rev.title}. ${revenueMeta[rev.type].label}. ${rev.magnitude}.`);
+      marker.textContent = "$";
+      marker.addEventListener("mouseenter", () => showRevenue(marker, rev));
+      marker.addEventListener("mouseleave", () => {
+        hideTooltip();
+        clearFocus();
+      });
+      marker.addEventListener("focus", () => showRevenue(marker, rev));
+      marker.addEventListener("blur", () => {
+        hideTooltip();
+        clearFocus();
+      });
+      markerLayer.appendChild(marker);
+    });
+  }
+
+  function renderStacked() {
+    stackedView.innerHTML = lanes.map((lane) => {
+      const laneNodes = nodes.filter((node) => node.lane === lane.id);
+      return `
+        <section class="stacked-lane" style="--lane-color: ${lane.color};">
+          <h2>${escapeHtml(lane.title)}</h2>
+          ${laneNodes.map((node) => {
+            const nodeRevenues = revenues.filter((rev) => rev.node === node.id);
+            return `
+              <div class="stacked-stage" data-node="${escapeHtml(node.id)}">
+                <strong>${escapeHtml(node.title)}</strong>
+                <p>${node.body}</p>
+                <div class="mobile-revenue-list">
+                  ${nodeRevenues.map((rev) => `
+                    <details class="mobile-revenue" data-type="${escapeHtml(rev.type)}">
+                      <summary><span class="mobile-dollar" style="--rev-color: ${revenueMeta[rev.type].color};">$</span>${escapeHtml(rev.title)}</summary>
+                      <p><strong>${escapeHtml(revenueMeta[rev.type].label)}.</strong> ${escapeHtml(rev.mechanism)} <span class="magnitude">${escapeHtml(rev.magnitude)}</span></p>
+                    </details>
+                  `).join("")}
+                </div>
+              </div>
+            `;
+          }).join("")}
+        </section>
+      `;
+    }).join("");
+  }
+
+  function focusRelated(id) {
+    const relatedIds = new Set([id]);
+    const node = nodes.find((item) => item.id === id);
+    const rev = revenues.find((item) => item.id === id);
+    if (node) revenues.filter((item) => item.node === node.id).forEach((item) => relatedIds.add(item.id));
+    if (rev) relatedIds.add(rev.node);
+
+    document.querySelectorAll(".stage-card").forEach((card) => {
+      const active = relatedIds.has(card.dataset.node);
+      card.classList.toggle("is-active", active);
+      card.classList.toggle("is-muted", !active);
+    });
+
+    document.querySelectorAll(".revenue-marker").forEach((marker) => {
+      const active = relatedIds.has(marker.dataset.revenue) || relatedIds.has(marker.dataset.node);
+      marker.classList.toggle("is-active", active);
+      marker.classList.toggle("is-muted", !active);
+    });
+
+    document.querySelectorAll(".flow-path").forEach((path) => {
+      const related = path.dataset.related.split(" ");
+      const active = related.some((item) => relatedIds.has(item));
+      path.classList.toggle("is-active", active);
+      path.classList.toggle("is-muted", !active);
+    });
+
+    document.querySelectorAll(".flow-label").forEach((label) => {
+      const related = label.dataset.related.split(" ");
+      const active = related.some((item) => relatedIds.has(item));
+      label.classList.toggle("is-muted", !active);
+    });
+  }
+
+  function clearFocus() {
+    document.querySelectorAll(".is-active, .is-muted").forEach((el) => {
+      el.classList.remove("is-active", "is-muted");
+    });
+    updateLaneExpansion();
+  }
+
+  function showRevenue(marker, rev) {
+    focusRelated(rev.id);
+    tooltip.style.setProperty("--rev-color", revenueMeta[rev.type].color);
+    tooltip.innerHTML = `
+      <strong class="tooltip-title">${escapeHtml(rev.title)}</strong>
+      <div class="tooltip-meta"><span class="tooltip-dot"></span>${escapeHtml(revenueMeta[rev.type].label)}</div>
+      <p>${escapeHtml(rev.mechanism)}</p>
+      <span class="magnitude">${escapeHtml(rev.magnitude)}</span>
+    `;
+    positionTooltip(marker);
+    tooltip.classList.add("is-visible");
+    tooltip.setAttribute("aria-hidden", "false");
+  }
+
+  function positionTooltip(marker) {
+    const canvasRect = mapCanvas.getBoundingClientRect();
+    const markerRect = marker.getBoundingClientRect();
+    const rawLeft = markerRect.left - canvasRect.left + markerRect.width / 2;
+    const rawTop = markerRect.top - canvasRect.top;
+    const tooltipWidth = tooltip.offsetWidth || 310;
+    const tooltipHeight = tooltip.offsetHeight || 156;
+    const minLeft = tooltipWidth / 2 + 12;
+    const maxLeft = canvasRect.width - tooltipWidth / 2 - 12;
+    const left = Math.min(Math.max(rawLeft, minLeft), maxLeft);
+    const shouldPlaceBelow = rawTop - tooltipHeight - 24 < 0;
+    const pointerX = Math.min(Math.max(rawLeft - left + tooltipWidth / 2, 18), tooltipWidth - 18);
+    tooltip.style.left = `${left}px`;
+    tooltip.style.top = `${shouldPlaceBelow ? rawTop + markerRect.height : rawTop}px`;
+    tooltip.style.setProperty("--pointer-x", `${pointerX}px`);
+    tooltip.classList.toggle("below", shouldPlaceBelow);
+  }
+
+  function hideTooltip() {
+    tooltip.classList.remove("is-visible");
+    tooltip.classList.remove("below");
+    tooltip.setAttribute("aria-hidden", "true");
+  }
+
+  function updateLaneExpansion() {
+    mapCanvas.dataset.expanded = expandedLane || "";
+    document.querySelectorAll(".lane-header").forEach((header) => {
+      const isExpanded = expandedLane === header.dataset.lane;
+      header.setAttribute("aria-expanded", String(isExpanded));
+      header.classList.toggle("is-expanded", isExpanded);
+      header.classList.toggle("is-collapsed", Boolean(expandedLane && !isExpanded));
+    });
+
+    document.querySelectorAll(".lane-band").forEach((band) => {
+      const isExpanded = expandedLane === band.dataset.lane;
+      band.classList.toggle("is-expanded", isExpanded);
+      band.classList.toggle("is-collapsed", Boolean(expandedLane && !isExpanded));
+    });
+
+    document.querySelectorAll(".stage-card, .revenue-marker").forEach((el) => {
+      el.classList.toggle("is-collapsed", Boolean(expandedLane && el.dataset.lane !== expandedLane));
+    });
+
+    document.querySelectorAll(".lane-summary").forEach((strip) => {
+      strip.classList.toggle("is-visible", Boolean(expandedLane && strip.dataset.lane !== expandedLane));
+    });
+
+    document.querySelectorAll(".flow-path").forEach((path) => {
+      const lanesForLine = path.dataset.lane.split(" ");
+      const visible = !expandedLane || lanesForLine.includes(expandedLane);
+      path.classList.toggle("lane-collapsed", !visible);
+    });
+  }
+
+  function updateRevenueFilters() {
+    revenueVisible = document.getElementById("toggleRevenue").checked;
+    activeTypes = new Set(Array.from(document.querySelectorAll('input[name="revType"]:checked')).map((input) => input.value));
+    mapCanvas.classList.toggle("hide-revenue", !revenueVisible);
+
+    document.querySelectorAll(".revenue-marker").forEach((marker) => {
+      marker.classList.toggle("is-filtered", !activeTypes.has(marker.dataset.type));
+      marker.classList.toggle("is-hidden-by-toggle", !revenueVisible);
+    });
+
+    document.querySelectorAll(".mobile-revenue").forEach((item) => {
+      item.hidden = !revenueVisible || !activeTypes.has(item.dataset.type);
+    });
+  }
+
+  function bindControls() {
+    document.getElementById("toggleRevenue").addEventListener("change", updateRevenueFilters);
+    document.querySelectorAll('input[name="revType"]').forEach((input) => {
+      input.addEventListener("change", updateRevenueFilters);
+    });
+    window.addEventListener("resize", () => {
+      const activeMarker = document.querySelector(".revenue-marker.is-active");
+      if (activeMarker && tooltip.classList.contains("is-visible")) positionTooltip(activeMarker);
+    });
+  }
+
+  renderLanes();
+  renderFlows();
+  renderNodes();
+  renderMarkers();
+  renderStacked();
+  bindControls();
+  updateRevenueFilters();
+})();
+</script>
+</body>
+</html>
