@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Transaction Banking - Where the Money Flows &amp; Where the Bank Earns</title>
+<title>Transaction Banking Operating Map</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,600..800,50,1&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -306,85 +306,6 @@
   .revenue-marker:focus-visible {
     outline: 3px solid rgba(118, 86, 163, 0.33);
     outline-offset: 3px;
-  }
-
-  .journey-bar {
-    max-width: 1540px;
-    margin: 0 auto;
-    padding: 0 32px 18px;
-  }
-
-  .journey-inner {
-    display: grid;
-    grid-template-columns: 250px minmax(0, 1fr) 280px;
-    gap: 1rem;
-    align-items: stretch;
-  }
-
-  .journey-card,
-  .outcome-card {
-    border: 1px solid rgba(26, 26, 26, 0.14);
-    border-radius: var(--radius);
-    background: rgba(255, 250, 242, 0.70);
-    padding: 14px 15px;
-  }
-
-  .journey-card strong,
-  .outcome-card strong {
-    display: block;
-    margin-bottom: 0.25rem;
-    font-family: "Fraunces", Georgia, serif;
-    font-size: 1.1rem;
-    font-weight: 700;
-  }
-
-  .journey-card span,
-  .outcome-card span {
-    color: var(--ink-soft);
-    font-size: 0.88rem;
-  }
-
-  .journey-track {
-    position: relative;
-    min-height: 84px;
-    border: 1px solid rgba(26, 26, 26, 0.12);
-    border-radius: var(--radius);
-    background: rgba(255, 250, 242, 0.48);
-  }
-
-  .journey-track::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 50%;
-    height: 2px;
-    background: linear-gradient(90deg, var(--cash), var(--trade), var(--fxlane));
-    transform: translateY(-50%);
-  }
-
-  .journey-track::after {
-    content: "";
-    position: absolute;
-    right: 8px;
-    top: 50%;
-    width: 10px;
-    height: 10px;
-    border-top: 2px solid var(--fxlane);
-    border-right: 2px solid var(--fxlane);
-    transform: translateY(-50%) rotate(45deg);
-  }
-
-  .journey-note {
-    position: absolute;
-    left: 24px;
-    top: 15px;
-    max-width: min(520px, calc(100% - 64px));
-    color: var(--ink-soft);
-    font-size: 0.86rem;
-    background: var(--bg);
-    border-radius: 4px;
-    padding-right: 0.6rem;
   }
 
   .map-section {
@@ -694,8 +615,8 @@
 
   .flow-path {
     fill: none;
-    stroke-linecap: round;
-    stroke-linejoin: round;
+    stroke-linecap: square;
+    stroke-linejoin: miter;
     opacity: 0.78;
     transition: opacity 200ms var(--ease), stroke-width 200ms var(--ease), filter 200ms var(--ease);
   }
@@ -1037,7 +958,6 @@
 
   @media (max-width: 860px) {
     .page-header,
-    .journey-bar,
     .map-section,
     .legend {
       padding-left: 20px;
@@ -1046,23 +966,6 @@
 
     h1 {
       font-size: 2.2rem;
-    }
-
-    .journey-inner {
-      grid-template-columns: 1fr;
-    }
-
-    .journey-track {
-      min-height: 58px;
-    }
-
-    .journey-note {
-      position: relative;
-      top: auto;
-      left: auto;
-      display: inline-block;
-      margin-top: 10px;
-      padding: 0 0.5rem 0 0;
     }
 
     .legend {
@@ -1105,8 +1008,8 @@
   <header class="page-header">
     <div>
       <p class="eyebrow">Transaction Banking Operating Map</p>
-      <h1>Transaction Banking &mdash; Where the Money Flows &amp; Where the Bank Earns</h1>
-      <p class="subtitle">A shared operating model for Cash Management, Trade Finance, and FX. Process is the canvas; revenue zones are the punctuation.</p>
+      <h1>Transaction Banking Operating Map</h1>
+      <p class="subtitle">A shared operating model for Cash Management, Trade &amp; Working Capital, and Foreign Exchange. Process is the canvas; revenue zones are the punctuation. Channels &amp; Connectivity (web portal, mobile app, host-to-host, APIs) sit underneath all three lanes and are not modelled separately.</p>
       <div class="meta-row" aria-label="Document metadata">
         <span>Internal stakeholder artefact</span>
         <span>Last updated 25 May 2026</span>
@@ -1124,30 +1027,13 @@
         </div>
         <div class="control-row" aria-label="Filter revenue type">
           <span class="control-label">Revenue</span>
-          <label class="chip" style="--chip-color: var(--nii);"><input type="checkbox" name="revType" value="nii" checked>Deposit gap</label>
+          <label class="chip" style="--chip-color: var(--nii);"><input type="checkbox" name="revType" value="nii" checked>Net Interest Income</label>
           <label class="chip" style="--chip-color: var(--fee);"><input type="checkbox" name="revType" value="fee" checked>Transaction fees</label>
           <label class="chip" style="--chip-color: var(--fx);"><input type="checkbox" name="revType" value="fx" checked>FX spread</label>
-          <label class="chip" style="--chip-color: var(--commission);"><input type="checkbox" name="revType" value="commission" checked>Trade financing</label>
         </div>
       </div>
     </section>
   </header>
-
-  <section class="journey-bar" aria-label="Client journey overlay">
-    <div class="journey-inner">
-      <div class="journey-card">
-        <strong>Corporate client</strong>
-        <span>Importer, exporter, or MNC moving working capital through accounts, trade flows, payments, and hedges.</span>
-      </div>
-      <div class="journey-track">
-        <p class="journey-note">The same client journey cuts across all three lanes: cash is collected, liquidity is positioned, trade is financed, currency is converted or hedged, and settlement closes the loop.</p>
-      </div>
-      <div class="outcome-card">
-        <strong>Business outcome</strong>
-        <span>Working capital optimised, risk hedged, payments executed, and information reconciled.</span>
-      </div>
-    </div>
-  </section>
 
   <main>
     <section class="map-section" aria-label="Interactive transaction banking operating map">
@@ -1195,18 +1081,17 @@
       <div class="legend-panel">
         <h2>Revenue types</h2>
         <ul class="legend-list">
-          <li class="legend-item"><span class="legend-dot" style="--legend-color: var(--nii);">$</span>The deposit gap (NIM) &mdash; money in current accounts earns the customer almost nothing while the bank lends it out at much higher rates</li>
-          <li class="legend-item"><span class="legend-dot" style="--legend-color: var(--fee);">$</span>Transaction fees &mdash; a few cents per payment, a few dollars per wire, a small percentage per card swipe</li>
+          <li class="legend-item"><span class="legend-dot" style="--legend-color: var(--nii);">$</span>Net Interest Income &mdash; the dollars earned on the spread (NIM) between what the bank pays for deposits and what it earns lending or investing them; includes interest on short-term trade and working-capital loans</li>
+          <li class="legend-item"><span class="legend-dot" style="--legend-color: var(--fee);">$</span>Transaction fees &mdash; a few cents per payment, a few dollars per cross-border transfer, plus fees on guarantees and LC confirmations</li>
           <li class="legend-item"><span class="legend-dot" style="--legend-color: var(--fx);">$</span>FX spread &mdash; the gap between the bank's wholesale rate and the rate quoted to the customer on every conversion</li>
-          <li class="legend-item"><span class="legend-dot" style="--legend-color: var(--commission);">$</span>Trade financing interest &mdash; interest and commissions on short-term loans, guarantees, and LCs backed by real shipments and invoices</li>
         </ul>
       </div>
       <div class="legend-panel">
         <h2>Lane colours</h2>
         <ul class="legend-list">
           <li class="legend-item"><span class="legend-dot" style="--legend-color: var(--cash);"></span>Cash Management</li>
-          <li class="legend-item"><span class="legend-dot" style="--legend-color: var(--trade);"></span>Trade Finance</li>
-          <li class="legend-item"><span class="legend-dot" style="--legend-color: var(--fxlane);"></span>FX</li>
+          <li class="legend-item"><span class="legend-dot" style="--legend-color: var(--trade);"></span>Trade &amp; Working Capital</li>
+          <li class="legend-item"><span class="legend-dot" style="--legend-color: var(--fxlane);"></span>Foreign Exchange (FX)</li>
         </ul>
       </div>
       <div class="legend-panel">
@@ -1228,10 +1113,9 @@
   const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   const revenueMeta = {
-    nii: { label: "The deposit gap (NIM)", color: "#526b35" },
+    nii: { label: "Net Interest Income", color: "#526b35" },
     fee: { label: "Transaction fees", color: "#c85a4a" },
-    fx: { label: "FX spread", color: "#7656a3" },
-    commission: { label: "Trade financing interest", color: "#756d63" }
+    fx: { label: "FX spread", color: "#7656a3" }
   };
 
   const lanes = [
@@ -1239,7 +1123,7 @@
       id: "cash",
       letter: "Lane A",
       title: "Cash Management",
-      summary: "Accounts, collections, liquidity, payments, and reporting",
+      summary: "The umbrella for accounts, payments, collections, liquidity management, and reporting",
       color: "#3d6b6b",
       band: { x: 270, y: 90, w: 1340, h: 238 },
       header: { x: 46, y: 116, w: 190, h: 154 },
@@ -1248,8 +1132,8 @@
     {
       id: "trade",
       letter: "Lane B",
-      title: "Trade Finance",
-      summary: "Trade instruments, financing, settlement, and risk mitigation",
+      title: "Trade & Working Capital",
+      summary: "Trade instruments, receivables and payables financing, supply chain finance, and risk mitigation",
       color: "#c85a4a",
       band: { x: 270, y: 350, w: 1340, h: 238 },
       header: { x: 46, y: 376, w: 190, h: 154 },
@@ -1471,13 +1355,13 @@
     { id: "fx-4", lane: "fx", kind: "solid", color: "#6b4a6b", width: 5, d: "M1225 727H1300", related: ["fx-settlement", "fx-position"] },
     { id: "fx-5", lane: "fx", kind: "solid", color: "#6b4a6b", width: 4, d: "M1475 727H1580", related: ["fx-position"] },
 
-    { id: "x-payment-fx", lane: "cash fx", kind: "solid", color: "#6b4a6b", width: 4, d: "M1195 282C1226 310 1248 334 1248 350C1248 430 1248 510 1248 594H950C950 616 950 638 950 652", related: ["cash-payments", "fx-execution", "rev-payments-fx", "rev-spot"] },
-    { id: "x-trade-payment", lane: "trade cash", kind: "solid", color: "#c85a4a", width: 3.5, d: "M1138 392C1140 362 1166 342 1195 328C1195 312 1195 296 1195 282", related: ["trade-settlement", "cash-payments", "rev-payments-fee"] },
-    { id: "x-trade-fx", lane: "trade fx", kind: "solid", color: "#6b4a6b", width: 3.5, d: "M1138 542C1138 578 1138 616 1138 652", related: ["trade-settlement", "fx-settlement", "rev-spot", "rev-forward"] },
+    { id: "x-payment-fx", lane: "cash fx", kind: "solid", color: "#6b4a6b", width: 4, d: "M1210 282V336H1248V594H950V652", related: ["cash-payments", "fx-execution", "rev-payments-fx", "rev-spot"] },
+    { id: "x-trade-payment", lane: "trade cash", kind: "solid", color: "#c85a4a", width: 3.5, d: "M1138 392V336H1180V282", related: ["trade-settlement", "cash-payments", "rev-payments-fee"] },
+    { id: "x-trade-fx", lane: "trade fx", kind: "solid", color: "#6b4a6b", width: 3.5, d: "M1138 542V652", related: ["trade-settlement", "fx-settlement", "rev-spot", "rev-forward"] },
 
-    { id: "internal-funding", lane: "cash trade", kind: "dashed", color: "#756d63", width: 3, d: "M887 282C887 318 887 356 887 392", related: ["cash-liquidity", "trade-financing", "rev-liquidity-nii", "rev-invoice-finance", "rev-scf-margin", "rev-preshipment"], label: { x: 900, y: 342, text: "internal funding" } },
-    { id: "internal-risk", lane: "trade", kind: "dashed", color: "#756d63", width: 3, d: "M1475 517C1570 517 1570 417 1475 417", related: ["trade-risk", "trade-instruments", "rev-guarantee", "rev-confirmation"], label: { x: 1458, y: 558, text: "risk book" } },
-    { id: "internal-fx-hedge", lane: "fx", kind: "dashed", color: "#756d63", width: 3, d: "M675 802C820 884 1220 884 1388 802", related: ["fx-pricing", "fx-position", "rev-forward", "rev-swap", "rev-hedging-advisory"], label: { x: 900, y: 882, text: "hedging and position book" } }
+    { id: "internal-funding", lane: "cash trade", kind: "dashed", color: "#756d63", width: 3, d: "M887 282V392", related: ["cash-liquidity", "trade-financing", "rev-liquidity-nii", "rev-invoice-finance", "rev-scf-margin", "rev-preshipment"], label: { x: 900, y: 342, text: "internal funding" } },
+    { id: "internal-risk", lane: "trade", kind: "dashed", color: "#756d63", width: 3, d: "M1475 517H1570V417H1475", related: ["trade-risk", "trade-instruments", "rev-guarantee", "rev-confirmation"], label: { x: 1458, y: 558, text: "risk book" } },
+    { id: "internal-fx-hedge", lane: "fx", kind: "dashed", color: "#756d63", width: 3, d: "M675 802V868H1388V802", related: ["fx-pricing", "fx-position", "rev-forward", "rev-swap", "rev-hedging-advisory"], label: { x: 900, y: 902, text: "hedging and position book" } }
   ];
 
   const revenues = [
@@ -1598,8 +1482,8 @@
       type: "fee",
       x: 660,
       y: 564,
-      title: "LC confirmation commission",
-      mechanism: "Bank earns confirmation commission for adding its own payment undertaking and taking bank or country risk.",
+      title: "LC confirmation",
+      mechanism: "Bank earns a confirmation fee for adding its own payment undertaking and taking bank or country risk.",
       magnitude: "mid contribution"
     },
     {
@@ -1621,7 +1505,7 @@
       x: 1338,
       y: 564,
       title: "Bank guarantees / standby LCs",
-      mechanism: "Bank earns commission as a percentage per annum on the guarantee or standby LC exposure.",
+      mechanism: "Bank earns a fee as a percentage per annum on the guarantee or standby LC exposure.",
       magnitude: "high contribution"
     },
     {
