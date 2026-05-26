@@ -537,12 +537,34 @@
     text-transform: uppercase;
   }
 
+  .revenue-zone {
+    position: absolute;
+    z-index: 3;
+    border: 1px solid color-mix(in srgb, var(--lane-color) 22%, transparent);
+    border-radius: 18px;
+    background: color-mix(in srgb, var(--lane-color) 6%, transparent);
+    box-shadow: inset 0 0 0 1px rgba(255, 250, 242, 0.46);
+    pointer-events: none;
+  }
+
+  .revenue-zone::after {
+    content: "";
+    position: absolute;
+    inset: 50% 10px auto;
+    height: 1px;
+    background: color-mix(in srgb, var(--lane-color) 34%, transparent);
+  }
+
+  .revenue-zone.is-collapsed {
+    opacity: 0;
+  }
+
   .stage-card {
     position: absolute;
     z-index: 6;
     display: grid;
     grid-template-rows: auto 1fr auto;
-    min-height: 128px;
+    min-height: 146px;
     border: 1px solid rgba(26, 26, 26, 0.14);
     border-top: 4px solid var(--lane-color);
     border-radius: var(--radius);
@@ -617,8 +639,8 @@
     z-index: 9;
     display: inline-grid;
     place-items: center;
-    width: 31px;
-    height: 31px;
+    width: 30px;
+    height: 30px;
     border: 2px solid #fffaf2;
     border-radius: 50%;
     background: var(--rev-color);
@@ -638,7 +660,7 @@
   .revenue-marker::after {
     content: "";
     position: absolute;
-    inset: -7px;
+    inset: -3px;
     border-radius: inherit;
     border: 1px solid color-mix(in srgb, var(--rev-color) 34%, transparent);
     opacity: 0.55;
@@ -647,7 +669,7 @@
   .revenue-marker:hover,
   .revenue-marker:focus-visible,
   .revenue-marker.is-active {
-    transform: translate(-50%, -50%) scale(1.16);
+    transform: translate(-50%, -50%) scale(1.08);
     box-shadow: 0 12px 26px color-mix(in srgb, var(--rev-color) 34%, transparent), 0 0 0 5px color-mix(in srgb, var(--rev-color) 13%, transparent);
   }
 
@@ -1084,7 +1106,7 @@
     <div>
       <p class="eyebrow">Transaction Banking Operating Map</p>
       <h1>Transaction Banking &mdash; Where the Money Flows &amp; Where the Bank Earns</h1>
-      <p class="subtitle">A shared operating model for Cash Management + Payments, Trade Finance, and FX. Process is the canvas; revenue zones are the punctuation.</p>
+      <p class="subtitle">A shared operating model for Cash Management, Trade Finance, and FX. Process is the canvas; revenue zones are the punctuation.</p>
       <div class="meta-row" aria-label="Document metadata">
         <span>Internal stakeholder artefact</span>
         <span>Last updated 25 May 2026</span>
@@ -1102,10 +1124,10 @@
         </div>
         <div class="control-row" aria-label="Filter revenue type">
           <span class="control-label">Revenue</span>
-          <label class="chip" style="--chip-color: var(--fee);"><input type="checkbox" name="revType" value="fee" checked>Fee</label>
-          <label class="chip" style="--chip-color: var(--nii);"><input type="checkbox" name="revType" value="nii" checked>NII</label>
-          <label class="chip" style="--chip-color: var(--fx);"><input type="checkbox" name="revType" value="fx" checked>FX</label>
-          <label class="chip" style="--chip-color: var(--commission);"><input type="checkbox" name="revType" value="commission" checked>Commission</label>
+          <label class="chip" style="--chip-color: var(--nii);"><input type="checkbox" name="revType" value="nii" checked>Deposit gap</label>
+          <label class="chip" style="--chip-color: var(--fee);"><input type="checkbox" name="revType" value="fee" checked>Transaction fees</label>
+          <label class="chip" style="--chip-color: var(--fx);"><input type="checkbox" name="revType" value="fx" checked>FX spread</label>
+          <label class="chip" style="--chip-color: var(--commission);"><input type="checkbox" name="revType" value="commission" checked>Trade financing</label>
         </div>
       </div>
     </section>
@@ -1173,16 +1195,16 @@
       <div class="legend-panel">
         <h2>Revenue types</h2>
         <ul class="legend-list">
-          <li class="legend-item"><span class="legend-dot" style="--legend-color: var(--fee);">$</span>Fee income - setup, transaction, subscription, advisory</li>
-          <li class="legend-item"><span class="legend-dot" style="--legend-color: var(--nii);">$</span>NII - deposit spread, float, financing margin</li>
-          <li class="legend-item"><span class="legend-dot" style="--legend-color: var(--fx);">$</span>FX spread - bid-ask, forward points, swap margin</li>
-          <li class="legend-item"><span class="legend-dot" style="--legend-color: var(--commission);">$</span>Risk / commission - guarantees, standby LCs, LC confirmations, risk participation</li>
+          <li class="legend-item"><span class="legend-dot" style="--legend-color: var(--nii);">$</span>The deposit gap (NIM) &mdash; money in current accounts earns the customer almost nothing while the bank lends it out at much higher rates</li>
+          <li class="legend-item"><span class="legend-dot" style="--legend-color: var(--fee);">$</span>Transaction fees &mdash; a few cents per payment, a few dollars per wire, a small percentage per card swipe</li>
+          <li class="legend-item"><span class="legend-dot" style="--legend-color: var(--fx);">$</span>FX spread &mdash; the gap between the bank's wholesale rate and the rate quoted to the customer on every conversion</li>
+          <li class="legend-item"><span class="legend-dot" style="--legend-color: var(--commission);">$</span>Trade financing interest &mdash; interest and commissions on short-term loans, guarantees, and LCs backed by real shipments and invoices</li>
         </ul>
       </div>
       <div class="legend-panel">
         <h2>Lane colours</h2>
         <ul class="legend-list">
-          <li class="legend-item"><span class="legend-dot" style="--legend-color: var(--cash);"></span>Cash Management &amp; Payments</li>
+          <li class="legend-item"><span class="legend-dot" style="--legend-color: var(--cash);"></span>Cash Management</li>
           <li class="legend-item"><span class="legend-dot" style="--legend-color: var(--trade);"></span>Trade Finance</li>
           <li class="legend-item"><span class="legend-dot" style="--legend-color: var(--fxlane);"></span>FX</li>
         </ul>
@@ -1206,22 +1228,22 @@
   const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   const revenueMeta = {
-    fee: { label: "Fee income", color: "#c85a4a" },
-    nii: { label: "Net Interest Income", color: "#526b35" },
+    nii: { label: "The deposit gap (NIM)", color: "#526b35" },
+    fee: { label: "Transaction fees", color: "#c85a4a" },
     fx: { label: "FX spread", color: "#7656a3" },
-    commission: { label: "Risk / commission", color: "#756d63" }
+    commission: { label: "Trade financing interest", color: "#756d63" }
   };
 
   const lanes = [
     {
       id: "cash",
       letter: "Lane A",
-      title: "Cash Management & Payments",
+      title: "Cash Management",
       summary: "Accounts, collections, liquidity, payments, and reporting",
       color: "#3d6b6b",
-      band: { x: 270, y: 96, w: 1114, h: 230 },
-      header: { x: 46, y: 122, w: 190, h: 154 },
-      strip: { x: 300, y: 174, w: 1025, h: 52 }
+      band: { x: 270, y: 90, w: 1340, h: 238 },
+      header: { x: 46, y: 116, w: 190, h: 154 },
+      strip: { x: 300, y: 168, w: 1250, h: 52 }
     },
     {
       id: "trade",
@@ -1229,9 +1251,9 @@
       title: "Trade Finance",
       summary: "Trade instruments, financing, settlement, and risk mitigation",
       color: "#c85a4a",
-      band: { x: 270, y: 336, w: 1114, h: 230 },
-      header: { x: 46, y: 362, w: 190, h: 154 },
-      strip: { x: 300, y: 414, w: 1025, h: 52 }
+      band: { x: 270, y: 350, w: 1340, h: 238 },
+      header: { x: 46, y: 376, w: 190, h: 154 },
+      strip: { x: 300, y: 428, w: 1250, h: 52 }
     },
     {
       id: "fx",
@@ -1239,10 +1261,24 @@
       title: "FX",
       summary: "Pricing, execution, settlement, and position management",
       color: "#6b4a6b",
-      band: { x: 270, y: 576, w: 1114, h: 230 },
-      header: { x: 46, y: 602, w: 190, h: 154 },
-      strip: { x: 300, y: 654, w: 1025, h: 52 }
+      band: { x: 270, y: 610, w: 1340, h: 238 },
+      header: { x: 46, y: 636, w: 190, h: 154 },
+      strip: { x: 300, y: 688, w: 1250, h: 52 }
     }
+  ];
+
+  const revenueZones = [
+    { lane: "cash", x: 312, y: 288, w: 82, h: 32 },
+    { lane: "cash", x: 562, y: 288, w: 82, h: 32 },
+    { lane: "cash", x: 812, y: 288, w: 82, h: 32 },
+    { lane: "cash", x: 1062, y: 288, w: 82, h: 32 },
+    { lane: "cash", x: 1312, y: 288, w: 82, h: 32 },
+    { lane: "trade", x: 562, y: 548, w: 146, h: 32 },
+    { lane: "trade", x: 812, y: 548, w: 146, h: 32 },
+    { lane: "trade", x: 1312, y: 548, w: 82, h: 32 },
+    { lane: "fx", x: 312, y: 808, w: 82, h: 32 },
+    { lane: "fx", x: 562, y: 808, w: 82, h: 32 },
+    { lane: "fx", x: 812, y: 808, w: 82, h: 32 }
   ];
 
   const nodes = [
@@ -1250,9 +1286,9 @@
       id: "cash-account",
       lane: "cash",
       x: 300,
-      y: 148,
+      y: 132,
       w: 175,
-      h: 132,
+      h: 150,
       title: "Account opening",
       body: "Controlled operating accounts are created and maintained for client cash.",
       foot: "cash starts"
@@ -1260,10 +1296,10 @@
     {
       id: "cash-collections",
       lane: "cash",
-      x: 510,
-      y: 148,
+      x: 550,
+      y: 132,
       w: 175,
-      h: 132,
+      h: 150,
       title: "Collections incoming",
       body: "Customer money arrives through <abbr title='Unique account numbers that identify who paid and why'>virtual accounts</abbr>, cards, direct debit, or <abbr title='A bank service that receives and processes customer payments'>lockbox</abbr>.",
       foot: "money in"
@@ -1271,10 +1307,10 @@
     {
       id: "cash-liquidity",
       lane: "cash",
-      x: 720,
-      y: 148,
+      x: 800,
+      y: 132,
       w: 175,
-      h: 132,
+      h: 150,
       title: "Liquidity pooling",
       body: "Balances are swept or pooled so surplus cash in one account covers shortfalls in another.",
       foot: "cash positioned"
@@ -1282,10 +1318,10 @@
     {
       id: "cash-payments",
       lane: "cash",
-      x: 930,
-      y: 148,
+      x: 1050,
+      y: 132,
       w: 175,
-      h: 132,
+      h: 150,
       title: "Payments outgoing",
       body: "Supplier, payroll, tax, and cross-border payments leave through bank rails.",
       foot: "money out"
@@ -1293,10 +1329,10 @@
     {
       id: "cash-recon",
       lane: "cash",
-      x: 1140,
-      y: 148,
+      x: 1300,
+      y: 132,
       w: 175,
-      h: 132,
+      h: 150,
       title: "Reconciliation & reporting",
       body: "Files, <abbr title='Application programming interface: a system-to-system connection'>APIs</abbr>, and dashboards match payments to invoices and ledgers.",
       foot: "control loop"
@@ -1305,9 +1341,9 @@
       id: "trade-origination",
       lane: "trade",
       x: 300,
-      y: 388,
+      y: 392,
       w: 175,
-      h: 132,
+      h: 150,
       title: "Trade origination",
       body: "Buyer, seller, shipment, tenor, and document needs are captured.",
       foot: "trade need"
@@ -1315,10 +1351,10 @@
     {
       id: "trade-instruments",
       lane: "trade",
-      x: 510,
-      y: 388,
+      x: 550,
+      y: 392,
       w: 175,
-      h: 132,
+      h: 150,
       title: "Documentary instruments",
       body: "<abbr title='Letter of credit: a bank undertaking to pay when documents comply'>LCs</abbr>, <abbr title='Documentary collection: bank handles shipping documents against payment or acceptance'>collections</abbr>, guarantees, and standby LCs manage payment and performance risk.",
       foot: "documents"
@@ -1326,10 +1362,10 @@
     {
       id: "trade-financing",
       lane: "trade",
-      x: 720,
-      y: 388,
-      w: 185,
-      h: 132,
+      x: 800,
+      y: 392,
+      w: 175,
+      h: 150,
       title: "Financing",
       body: "Invoices, payables, receivables, and shipment advances fund working capital.",
       foot: "credit deployed"
@@ -1337,10 +1373,10 @@
     {
       id: "trade-settlement",
       lane: "trade",
-      x: 940,
-      y: 388,
+      x: 1050,
+      y: 392,
       w: 175,
-      h: 132,
+      h: 150,
       title: "Settlement",
       body: "Documents, obligations, loan proceeds, and currency legs settle.",
       foot: "cash closes"
@@ -1348,10 +1384,10 @@
     {
       id: "trade-risk",
       lane: "trade",
-      x: 1150,
-      y: 388,
+      x: 1300,
+      y: 392,
       w: 175,
-      h: 132,
+      h: 150,
       title: "Risk mitigation",
       body: "Guarantees, confirmations, insurance, and risk participation manage exposure.",
       foot: "risk held"
@@ -1360,9 +1396,9 @@
       id: "fx-quote",
       lane: "fx",
       x: 300,
-      y: 628,
+      y: 652,
       w: 175,
-      h: 132,
+      h: 150,
       title: "Quote request",
       body: "Client requests a conversion or hedge tied to payment, trade, or treasury.",
       foot: "need priced"
@@ -1370,10 +1406,10 @@
     {
       id: "fx-pricing",
       lane: "fx",
-      x: 510,
-      y: 628,
+      x: 550,
+      y: 652,
       w: 175,
-      h: 132,
+      h: 150,
       title: "Pricing & hedging",
       body: "Sales and trading price spot, forwards, swaps, and structured hedges for the client.",
       foot: "spread set"
@@ -1381,10 +1417,10 @@
     {
       id: "fx-execution",
       lane: "fx",
-      x: 720,
-      y: 628,
+      x: 800,
+      y: 652,
       w: 185,
-      h: 132,
+      h: 150,
       title: "Execution",
       body: "Spot, forward, or swap is booked and linked to payment or trade settlement.",
       foot: "trade booked"
@@ -1392,10 +1428,10 @@
     {
       id: "fx-settlement",
       lane: "fx",
-      x: 940,
-      y: 628,
+      x: 1050,
+      y: 652,
       w: 175,
-      h: 132,
+      h: 150,
       title: "Settlement",
       body: "<abbr title='Continuous Linked Settlement: a service that reduces FX settlement risk'>CLS</abbr> or correspondent accounts exchange the two currency legs.",
       foot: "currency moves"
@@ -1403,10 +1439,10 @@
     {
       id: "fx-position",
       lane: "fx",
-      x: 1150,
-      y: 628,
+      x: 1300,
+      y: 652,
       w: 175,
-      h: 132,
+      h: 150,
       title: "Position management",
       body: "The bank hedges, funds, and monitors open currency positions.",
       foot: "risk managed"
@@ -1414,34 +1450,34 @@
   ];
 
   const flowLines = [
-    { id: "cash-in-0", lane: "cash", kind: "solid", color: "#3d6b6b", width: 4, d: "M246 204H300", related: ["cash-account"] },
-    { id: "cash-in-1", lane: "cash", kind: "solid", color: "#3d6b6b", width: 5, d: "M475 204H510", related: ["cash-account", "cash-collections", "rev-account-maintenance", "rev-collections-fee"] },
-    { id: "cash-in-2", lane: "cash", kind: "solid", color: "#3d6b6b", width: 9, d: "M685 204H720", related: ["cash-collections", "cash-liquidity", "rev-collections-fee", "rev-collections-float", "rev-liquidity-fee", "rev-liquidity-nii"] },
-    { id: "cash-out-1", lane: "cash", kind: "solid", color: "#3d6b6b", width: 8, d: "M895 204H930", related: ["cash-liquidity", "cash-payments", "rev-liquidity-nii", "rev-payments-fee"] },
-    { id: "cash-out-2", lane: "cash", kind: "solid", color: "#3d6b6b", width: 7, d: "M1105 204H1140", related: ["cash-payments", "cash-recon", "rev-payments-fee", "rev-payments-fx", "rev-recon-fee"] },
-    { id: "cash-out-3", lane: "cash", kind: "solid", color: "#3d6b6b", width: 4, d: "M1315 204H1428", related: ["cash-recon"] },
+    { id: "cash-in-0", lane: "cash", kind: "solid", color: "#3d6b6b", width: 4, d: "M246 207H300", related: ["cash-account"] },
+    { id: "cash-in-1", lane: "cash", kind: "solid", color: "#3d6b6b", width: 5, d: "M475 207H550", related: ["cash-account", "cash-collections", "rev-account-maintenance", "rev-collections-fee"] },
+    { id: "cash-in-2", lane: "cash", kind: "solid", color: "#3d6b6b", width: 9, d: "M725 207H800", related: ["cash-collections", "cash-liquidity", "rev-collections-fee", "rev-collections-float", "rev-liquidity-fee", "rev-liquidity-nii"] },
+    { id: "cash-out-1", lane: "cash", kind: "solid", color: "#3d6b6b", width: 8, d: "M975 207H1050", related: ["cash-liquidity", "cash-payments", "rev-liquidity-nii", "rev-payments-fee"] },
+    { id: "cash-out-2", lane: "cash", kind: "solid", color: "#3d6b6b", width: 7, d: "M1225 207H1300", related: ["cash-payments", "cash-recon", "rev-payments-fee", "rev-payments-fx", "rev-recon-fee"] },
+    { id: "cash-out-3", lane: "cash", kind: "solid", color: "#3d6b6b", width: 4, d: "M1475 207H1580", related: ["cash-recon"] },
 
-    { id: "trade-0", lane: "trade", kind: "solid", color: "#c85a4a", width: 4, d: "M246 444H300", related: ["trade-origination"] },
-    { id: "trade-1", lane: "trade", kind: "solid", color: "#c85a4a", width: 5, d: "M475 444H510", related: ["trade-origination", "trade-instruments", "rev-lc-issuance"] },
-    { id: "trade-2", lane: "trade", kind: "solid", color: "#c85a4a", width: 6, d: "M685 444H720", related: ["trade-instruments", "trade-financing", "rev-lc-advising", "rev-confirmation", "rev-doc-collection", "rev-guarantee", "rev-invoice-finance"] },
-    { id: "trade-3", lane: "trade", kind: "solid", color: "#c85a4a", width: 7, d: "M905 444H940", related: ["trade-financing", "trade-settlement", "rev-invoice-finance", "rev-scf-margin", "rev-preshipment"] },
-    { id: "trade-4", lane: "trade", kind: "solid", color: "#c85a4a", width: 5, d: "M1115 444H1150", related: ["trade-settlement", "trade-risk", "rev-guarantee"] },
-    { id: "trade-5", lane: "trade", kind: "solid", color: "#c85a4a", width: 4, d: "M1325 444H1428", related: ["trade-risk"] },
+    { id: "trade-0", lane: "trade", kind: "solid", color: "#c85a4a", width: 4, d: "M246 467H300", related: ["trade-origination"] },
+    { id: "trade-1", lane: "trade", kind: "solid", color: "#c85a4a", width: 5, d: "M475 467H550", related: ["trade-origination", "trade-instruments", "rev-lc-issuance"] },
+    { id: "trade-2", lane: "trade", kind: "solid", color: "#c85a4a", width: 6, d: "M725 467H800", related: ["trade-instruments", "trade-financing", "rev-lc-advising", "rev-confirmation", "rev-doc-collection", "rev-guarantee", "rev-invoice-finance"] },
+    { id: "trade-3", lane: "trade", kind: "solid", color: "#c85a4a", width: 7, d: "M975 467H1050", related: ["trade-financing", "trade-settlement", "rev-invoice-finance", "rev-scf-margin", "rev-preshipment"] },
+    { id: "trade-4", lane: "trade", kind: "solid", color: "#c85a4a", width: 5, d: "M1225 467H1300", related: ["trade-settlement", "trade-risk", "rev-guarantee"] },
+    { id: "trade-5", lane: "trade", kind: "solid", color: "#c85a4a", width: 4, d: "M1475 467H1580", related: ["trade-risk"] },
 
-    { id: "fx-0", lane: "fx", kind: "solid", color: "#6b4a6b", width: 4, d: "M246 684H300", related: ["fx-quote"] },
-    { id: "fx-1", lane: "fx", kind: "solid", color: "#6b4a6b", width: 5, d: "M475 684H510", related: ["fx-quote", "fx-pricing", "rev-hedging-advisory", "rev-forward"] },
-    { id: "fx-2", lane: "fx", kind: "solid", color: "#6b4a6b", width: 8, d: "M685 684H720", related: ["fx-pricing", "fx-execution", "rev-spot", "rev-forward", "rev-swap"] },
-    { id: "fx-3", lane: "fx", kind: "solid", color: "#6b4a6b", width: 8, d: "M905 684H940", related: ["fx-execution", "fx-settlement", "rev-spot", "rev-forward", "rev-swap"] },
-    { id: "fx-4", lane: "fx", kind: "solid", color: "#6b4a6b", width: 5, d: "M1115 684H1150", related: ["fx-settlement", "fx-position"] },
-    { id: "fx-5", lane: "fx", kind: "solid", color: "#6b4a6b", width: 4, d: "M1325 684H1428", related: ["fx-position"] },
+    { id: "fx-0", lane: "fx", kind: "solid", color: "#6b4a6b", width: 4, d: "M246 727H300", related: ["fx-quote"] },
+    { id: "fx-1", lane: "fx", kind: "solid", color: "#6b4a6b", width: 5, d: "M475 727H550", related: ["fx-quote", "fx-pricing", "rev-hedging-advisory", "rev-forward"] },
+    { id: "fx-2", lane: "fx", kind: "solid", color: "#6b4a6b", width: 8, d: "M725 727H800", related: ["fx-pricing", "fx-execution", "rev-spot", "rev-forward", "rev-swap"] },
+    { id: "fx-3", lane: "fx", kind: "solid", color: "#6b4a6b", width: 8, d: "M985 727H1050", related: ["fx-execution", "fx-settlement", "rev-spot", "rev-forward", "rev-swap"] },
+    { id: "fx-4", lane: "fx", kind: "solid", color: "#6b4a6b", width: 5, d: "M1225 727H1300", related: ["fx-settlement", "fx-position"] },
+    { id: "fx-5", lane: "fx", kind: "solid", color: "#6b4a6b", width: 4, d: "M1475 727H1580", related: ["fx-position"] },
 
-    { id: "x-payment-fx", lane: "cash fx", kind: "solid", color: "#6b4a6b", width: 4, d: "M1018 260C1056 388 980 522 820 628", related: ["cash-payments", "fx-execution", "rev-payments-fx", "rev-spot"] },
-    { id: "x-trade-payment", lane: "trade cash", kind: "solid", color: "#c85a4a", width: 3.5, d: "M1028 388C1084 332 1084 290 1018 260", related: ["trade-settlement", "cash-payments", "rev-payments-fee"] },
-    { id: "x-trade-fx", lane: "trade fx", kind: "solid", color: "#6b4a6b", width: 3.5, d: "M1028 500C1088 560 1130 600 1028 628", related: ["trade-settlement", "fx-settlement", "rev-spot", "rev-forward"] },
+    { id: "x-payment-fx", lane: "cash fx", kind: "solid", color: "#6b4a6b", width: 4, d: "M1195 282C1226 310 1248 334 1248 350C1248 430 1248 510 1248 594H950C950 616 950 638 950 652", related: ["cash-payments", "fx-execution", "rev-payments-fx", "rev-spot"] },
+    { id: "x-trade-payment", lane: "trade cash", kind: "solid", color: "#c85a4a", width: 3.5, d: "M1138 392C1140 362 1166 342 1195 328C1195 312 1195 296 1195 282", related: ["trade-settlement", "cash-payments", "rev-payments-fee"] },
+    { id: "x-trade-fx", lane: "trade fx", kind: "solid", color: "#6b4a6b", width: 3.5, d: "M1138 542C1138 578 1138 616 1138 652", related: ["trade-settlement", "fx-settlement", "rev-spot", "rev-forward"] },
 
-    { id: "internal-funding", lane: "cash trade", kind: "dashed", color: "#756d63", width: 3, d: "M808 260C830 318 792 348 812 388", related: ["cash-liquidity", "trade-financing", "rev-liquidity-nii", "rev-invoice-finance", "rev-scf-margin", "rev-preshipment"], label: { x: 832, y: 334, text: "internal funding" } },
-    { id: "internal-risk", lane: "trade", kind: "dashed", color: "#756d63", width: 3, d: "M1238 510C1348 542 1340 370 1242 388", related: ["trade-risk", "trade-instruments", "rev-guarantee", "rev-confirmation"], label: { x: 1262, y: 558, text: "risk book" } },
-    { id: "internal-fx-hedge", lane: "fx", kind: "dashed", color: "#756d63", width: 3, d: "M610 760C720 850 1114 850 1238 760", related: ["fx-pricing", "fx-position", "rev-forward", "rev-swap", "rev-hedging-advisory"], label: { x: 800, y: 862, text: "hedging and position book" } }
+    { id: "internal-funding", lane: "cash trade", kind: "dashed", color: "#756d63", width: 3, d: "M887 282C887 318 887 356 887 392", related: ["cash-liquidity", "trade-financing", "rev-liquidity-nii", "rev-invoice-finance", "rev-scf-margin", "rev-preshipment"], label: { x: 900, y: 342, text: "internal funding" } },
+    { id: "internal-risk", lane: "trade", kind: "dashed", color: "#756d63", width: 3, d: "M1475 517C1570 517 1570 417 1475 417", related: ["trade-risk", "trade-instruments", "rev-guarantee", "rev-confirmation"], label: { x: 1458, y: 558, text: "risk book" } },
+    { id: "internal-fx-hedge", lane: "fx", kind: "dashed", color: "#756d63", width: 3, d: "M675 802C820 884 1220 884 1388 802", related: ["fx-pricing", "fx-position", "rev-forward", "rev-swap", "rev-hedging-advisory"], label: { x: 900, y: 882, text: "hedging and position book" } }
   ];
 
   const revenues = [
@@ -1450,8 +1486,8 @@
       lane: "cash",
       node: "cash-account",
       type: "fee",
-      x: 455,
-      y: 142,
+      x: 338,
+      y: 304,
       title: "Account opening & maintenance",
       mechanism: "Bank earns setup, account maintenance, and service fees for operating account infrastructure.",
       magnitude: "low-mid contribution"
@@ -1461,8 +1497,8 @@
       lane: "cash",
       node: "cash-collections",
       type: "fee",
-      x: 640,
-      y: 142,
+      x: 588,
+      y: 304,
       title: "Incoming collections fee",
       mechanism: "Bank earns per-transaction or service fees on virtual account, lockbox, card, or direct debit collections.",
       magnitude: "high combined contribution"
@@ -1472,8 +1508,8 @@
       lane: "cash",
       node: "cash-collections",
       type: "nii",
-      x: 675,
-      y: 172,
+      x: 624,
+      y: 304,
       title: "Collections float",
       mechanism: "Bank earns deposit spread while collected funds sit before they are swept, paid out, or invested.",
       magnitude: "high combined contribution"
@@ -1483,8 +1519,8 @@
       lane: "cash",
       node: "cash-liquidity",
       type: "fee",
-      x: 850,
-      y: 142,
+      x: 838,
+      y: 304,
       title: "Liquidity pooling / sweeping fee",
       mechanism: "Bank earns structure, account, and transfer fees for pooling, sweeping, or target balancing.",
       magnitude: "mid contribution"
@@ -1494,8 +1530,8 @@
       lane: "cash",
       node: "cash-liquidity",
       type: "nii",
-      x: 885,
-      y: 172,
+      x: 874,
+      y: 304,
       title: "Liquidity spread on positions",
       mechanism: "Bank earns deposit or funding spread on pooled balances and intercompany positions over time.",
       magnitude: "mid contribution"
@@ -1505,8 +1541,8 @@
       lane: "cash",
       node: "cash-payments",
       type: "fee",
-      x: 1060,
-      y: 142,
+      x: 1088,
+      y: 304,
       title: "Outgoing payment transaction fee",
       mechanism: "Bank earns a fee per domestic or cross-border payment, often tiered by rail, file, and service level.",
       magnitude: "high contribution"
@@ -1516,8 +1552,8 @@
       lane: "cash",
       node: "cash-payments",
       type: "fx",
-      x: 1095,
-      y: 172,
+      x: 1124,
+      y: 304,
       title: "Cross-currency payment FX spread",
       mechanism: "Bank earns bid-ask spread when an outgoing payment requires currency conversion.",
       magnitude: "high contribution"
@@ -1527,8 +1563,8 @@
       lane: "cash",
       node: "cash-recon",
       type: "fee",
-      x: 1276,
-      y: 142,
+      x: 1338,
+      y: 304,
       title: "Reconciliation & reporting fee",
       mechanism: "Bank earns subscription or value-add fees for host-to-host files, APIs, and enriched reporting.",
       magnitude: "low-mid contribution"
@@ -1538,8 +1574,8 @@
       lane: "trade",
       node: "trade-instruments",
       type: "fee",
-      x: 560,
-      y: 382,
+      x: 588,
+      y: 564,
       title: "LC issuance",
       mechanism: "Bank earns an issuance fee for creating a letter of credit and taking document compliance obligations.",
       magnitude: "mid contribution"
@@ -1549,8 +1585,8 @@
       lane: "trade",
       node: "trade-instruments",
       type: "fee",
-      x: 598,
-      y: 382,
+      x: 624,
+      y: 564,
       title: "LC advising",
       mechanism: "Bank earns an advising fee for authenticating and communicating the letter of credit to the beneficiary.",
       magnitude: "mid contribution"
@@ -1559,9 +1595,9 @@
       id: "rev-confirmation",
       lane: "trade",
       node: "trade-instruments",
-      type: "commission",
-      x: 636,
-      y: 382,
+      type: "fee",
+      x: 660,
+      y: 564,
       title: "LC confirmation commission",
       mechanism: "Bank earns confirmation commission for adding its own payment undertaking and taking bank or country risk.",
       magnitude: "mid contribution"
@@ -1571,8 +1607,8 @@
       lane: "trade",
       node: "trade-instruments",
       type: "fee",
-      x: 674,
-      y: 382,
+      x: 696,
+      y: 564,
       title: "Documentary collection handling",
       mechanism: "Bank earns handling fees for processing shipping documents against payment or acceptance.",
       magnitude: "low contribution"
@@ -1581,9 +1617,9 @@
       id: "rev-guarantee",
       lane: "trade",
       node: "trade-risk",
-      type: "commission",
-      x: 1286,
-      y: 382,
+      type: "fee",
+      x: 1338,
+      y: 564,
       title: "Bank guarantees / standby LCs",
       mechanism: "Bank earns commission as a percentage per annum on the guarantee or standby LC exposure.",
       magnitude: "high contribution"
@@ -1593,8 +1629,8 @@
       lane: "trade",
       node: "trade-financing",
       type: "nii",
-      x: 850,
-      y: 382,
+      x: 838,
+      y: 564,
       title: "Invoice / receivables financing",
       mechanism: "Bank earns discount margin or lending spread while advancing cash against receivables.",
       magnitude: "high contribution"
@@ -1604,8 +1640,8 @@
       lane: "trade",
       node: "trade-financing",
       type: "nii",
-      x: 884,
-      y: 412,
+      x: 874,
+      y: 564,
       title: "Supply chain finance margin",
       mechanism: "Bank earns a supplier discount margin, often supported by the anchor buyer relationship.",
       magnitude: "mid-high contribution"
@@ -1615,8 +1651,8 @@
       lane: "trade",
       node: "trade-financing",
       type: "fee",
-      x: 812,
-      y: 412,
+      x: 910,
+      y: 564,
       title: "Supply chain finance programme fee",
       mechanism: "Bank earns programme, platform, or onboarding fees for running the payables finance structure.",
       magnitude: "mid-high contribution"
@@ -1626,8 +1662,8 @@
       lane: "trade",
       node: "trade-financing",
       type: "nii",
-      x: 848,
-      y: 448,
+      x: 946,
+      y: 564,
       title: "Pre / post-shipment financing",
       mechanism: "Bank earns lending spread on advances before shipment or after shipment until buyer payment arrives.",
       magnitude: "mid contribution"
@@ -1637,8 +1673,8 @@
       lane: "fx",
       node: "fx-execution",
       type: "fx",
-      x: 850,
-      y: 622,
+      x: 838,
+      y: 824,
       title: "Spot conversion",
       mechanism: "Bank earns bid-ask spread when currency is converted, including FX embedded in a payment.",
       magnitude: "very high contribution"
@@ -1648,8 +1684,8 @@
       lane: "fx",
       node: "fx-pricing",
       type: "fx",
-      x: 640,
-      y: 622,
+      x: 588,
+      y: 824,
       title: "Forward contract",
       mechanism: "Bank earns spread in the forward points and all-in forward rate for a future-dated conversion.",
       magnitude: "mid-high contribution"
@@ -1659,8 +1695,8 @@
       lane: "fx",
       node: "fx-pricing",
       type: "fx",
-      x: 675,
-      y: 652,
+      x: 624,
+      y: 824,
       title: "FX swap",
       mechanism: "Bank earns swap margin when exchanging currencies now and reversing them at a later date.",
       magnitude: "mid contribution"
@@ -1670,8 +1706,8 @@
       lane: "fx",
       node: "fx-quote",
       type: "fee",
-      x: 455,
-      y: 622,
+      x: 338,
+      y: 824,
       title: "Hedging advisory",
       mechanism: "Bank earns an advisory or structuring fee for designing hedge solutions tied to client risk; the spread on any executed forward, swap, or option is captured separately.",
       magnitude: "mid contribution"
@@ -1792,6 +1828,18 @@
     });
   }
 
+  function renderRevenueZones() {
+    revenueZones.forEach((zone) => {
+      const lane = lanes.find((item) => item.id === zone.lane);
+      const markerZone = document.createElement("div");
+      markerZone.className = "revenue-zone";
+      markerZone.dataset.lane = zone.lane;
+      markerZone.style.setProperty("--lane-color", lane.color);
+      setBox(markerZone, zone);
+      laneLayer.appendChild(markerZone);
+    });
+  }
+
   function renderFlows() {
     flowLines.forEach((line, index) => {
       const path = createSvg("path", {
@@ -1801,7 +1849,7 @@
         stroke: line.color,
         "stroke-width": line.width,
         "stroke-dasharray": line.kind === "dashed" ? "10 12" : null,
-        "marker-end": line.id.endsWith("-3") || line.id.endsWith("-5") ? `url(#arrow-${line.lane.includes("cash") && !line.lane.includes("fx") ? "cash" : line.lane.includes("trade") && !line.lane.includes("fx") ? "trade" : line.lane.includes("fx") ? "fx" : "stone"})` : null
+        "marker-end": ["cash-out-3", "trade-5", "fx-5"].includes(line.id) ? `url(#arrow-${line.lane.includes("cash") && !line.lane.includes("fx") ? "cash" : line.lane.includes("trade") && !line.lane.includes("fx") ? "trade" : line.lane.includes("fx") ? "fx" : "stone"})` : null
       });
       path.dataset.related = line.related.join(" ");
       path.dataset.lane = line.lane;
@@ -1988,7 +2036,7 @@
       band.classList.toggle("is-collapsed", Boolean(expandedLane && !isExpanded));
     });
 
-    document.querySelectorAll(".stage-card, .revenue-marker").forEach((el) => {
+    document.querySelectorAll(".stage-card, .revenue-marker, .revenue-zone").forEach((el) => {
       el.classList.toggle("is-collapsed", Boolean(expandedLane && el.dataset.lane !== expandedLane));
     });
 
@@ -2030,6 +2078,7 @@
   }
 
   renderLanes();
+  renderRevenueZones();
   renderFlows();
   renderNodes();
   renderMarkers();
